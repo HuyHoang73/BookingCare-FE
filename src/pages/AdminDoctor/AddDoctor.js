@@ -9,6 +9,7 @@ import {
   Image,
   Input,
   InputNumber,
+  message,
   Select,
   Space,
   Upload,
@@ -17,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
+import {createUser} from "../../services/UserServices";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -112,7 +114,7 @@ export default function AddDoctor() {
     phoneNumber: "0985693949",
     username: "gacon123",
     dateOfBirth: "07/03/2003",
-    image: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2dlIj6cKvUV7rgiBMxVKcNnIDV_xWUBgoysWfkz2sJwic6Chv"
+    avatar: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2dlIj6cKvUV7rgiBMxVKcNnIDV_xWUBgoysWfkz2sJwic6Chv"
   };
 
   useEffect(() => {
@@ -123,7 +125,7 @@ export default function AddDoctor() {
           uid: `-1`,
           name: `image.png`,
           status: "done",
-          url: data.image,
+          url: data.avatar,
         },
       ]);
     }
@@ -136,12 +138,20 @@ export default function AddDoctor() {
     return e?.fileList || [];
   };
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     values.dateOfBirth = dateOfBirth;
+    values.avatar = "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7"
     let finalValues = {
       id: id.id,
       ...values,
     };
+    try {
+      const response = await createUser(finalValues);
+      message.success(response.message);
+    } catch (error) {
+      message.error("Thất bại");
+      console.error('Failed:', error);
+    }
     console.log(finalValues);
   };
 
@@ -353,7 +363,7 @@ export default function AddDoctor() {
         </Form.Item>
 
         <Form.Item
-          name="image"
+          name="avatar"
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}

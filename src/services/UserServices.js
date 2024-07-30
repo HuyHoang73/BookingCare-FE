@@ -1,4 +1,4 @@
-import { get, post, put, del } from './api';
+import { get, post, put, del } from '../utils/api';
 
 const BASE_URL = '/api/users';
 
