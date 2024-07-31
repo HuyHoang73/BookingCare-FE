@@ -2,10 +2,12 @@ import {
   Button,
   Col,
   Collapse,
+  DatePicker,
   Flex,
   Form,
   Input,
   InputNumber,
+  message,
   Row,
   Select,
   Space,
@@ -16,11 +18,34 @@ import { Option } from "antd/es/mentions";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
+import { createUser } from "../../services/UserServices";
 
 export default function ListDoctor() {
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+
   const inputNumberStyle = {
     width: "100%",
   };
+
+  const dobChange = (date, dateString) => {
+    setDateOfBirth(dateString);
+  };
+
+  var optionGender = [
+    {
+      value: "Nam",
+      label: "Nam",
+    },
+    {
+      value: "Nữ",
+      label: "Nữ",
+    },
+    {
+      value: "Khác",
+      label: "Khác",
+    },
+  ];
 
   var optionMajor = [
     {
@@ -64,6 +89,11 @@ export default function ListDoctor() {
     {
       title: "Họ tên",
       dataIndex: "name",
+      align: "center",
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
       align: "center",
     },
     {
@@ -131,7 +161,8 @@ export default function ListDoctor() {
       phoneNumber: "0985693949",
       experience: 15,
       certification: 25,
-      degree: "GS"
+      degree: "GS",
+      gender: "Nam"
     },
     {
       id: "2",
@@ -140,20 +171,28 @@ export default function ListDoctor() {
       phoneNumber: "0959493949",
       experience: 5,
       certification: 1,
-      degree: "BS"
-    }
+      degree: "BS",
+      gender: "Nam"
+    },
   ];
 
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
-  var onFinish = (values) => {
-    let finalValues = {};
-    finalValues.name = values.name;
-    finalValues.gmail = values.gmail;
-    finalValues.phoneNumber = values.phoneNumber;
-    finalValues.majorId = values.majorId;
-    finalValues.degree = values.degree;
-    console.log("sucess", finalValues);
+  const onFinish = async (values) => {
+    values.dateOfBirth = dateOfBirth;
+    values.avatar =
+      "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
+    let finalValues = {
+      ...values,
+    };
+    try {
+      const response = await createUser(finalValues);
+      message.success(response.message);
+    } catch (error) {
+      message.error("Thất bại");
+      console.error("Failed:", error);
+    }
+    console.log(finalValues);
   };
 
   var onFinishFailed = (errorInfo) => {
@@ -172,14 +211,21 @@ export default function ListDoctor() {
       >
         <Row gutter={24}>
           {/* Họ tên */}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item label="Họ và tên" name="name">
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
           </Col>
 
+          {/* Địa chỉ */}
+          <Col span={6}>
+            <Form.Item label="Địa chỉ" name="address">
+              <Input placeholder="Nhập địa chỉ" />
+            </Form.Item>
+          </Col>
+
           {/*Gmail*/}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               label="Gmail"
               name="gmail"
@@ -195,7 +241,7 @@ export default function ListDoctor() {
           </Col>
 
           {/* SĐT */}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               label="Số điện thoại"
               name="phoneNumber"
@@ -210,54 +256,74 @@ export default function ListDoctor() {
             </Form.Item>
           </Col>
 
-          {/* Số năm kinh nghiệm từ */}
-          <Col span={5}>
-            <Form.Item label="Số năm kinh nghiệm từ" name="experienceFrom">
-              <InputNumber min={1} max={40} style={inputNumberStyle} />
+          {/* Ngày sinh từ*/}
+          <Col span={6}>
+            <Form.Item label="Ngày sinh từ" name="dateOfBirthFrom">
+              <DatePicker style={inputNumberStyle} onChange={dobChange} />
             </Form.Item>
           </Col>
 
-          {/* Số năm kinh nghiệm đến */}
-          <Col span={5}>
-            <Form.Item label="Số năm kinh nghiệm đến" name="experienceTo">
-              <InputNumber min={1} max={40} style={inputNumberStyle} />
+          {/* Ngày sinh đến */}
+          <Col span={6}>
+            <Form.Item label="Ngày sinh đến" name="dateOfBirthTo">
+              <DatePicker style={inputNumberStyle} onChange={dobChange} />
             </Form.Item>
           </Col>
 
-          {/*Chuyên khoa */}
-          <Col span={7}>
-            <Form.Item label="Chọn chuyên khoa" name="majorId">
-              <Select
-                showSearch
-                style={{ width: "100%" }}
-                placeholder="Chọn chuyên khoa"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label.toLowerCase() ?? "").includes(
-                    input.toLowerCase()
-                  )
-                }
-                filterSort={(optionA, optionB) =>
-                  (optionA?.key ?? "")
-                    .toLowerCase()
-                    .localeCompare((optionB?.key ?? "").toLowerCase())
-                }
-              >
-                {optionMajor.map((option) => (
+          {/* Giới tính */}
+          <Col span={6}>
+            <Form.Item label="Giới tính" name="gender">
+              <Select style={{ width: "100%" }} placeholder="Chọn giới tính">
+                {optionGender.map((option) => (
                   <Option
-                    key={option.id}
-                    value={option.id}
-                    label={option.name}
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
                   >
-                    {option.name}
+                    {option.label}
                   </Option>
                 ))}
               </Select>
             </Form.Item>
           </Col>
 
+          {/* Dân tộc */}
+          <Col span={6}>
+            <Form.Item label="Dân tộc" name="ethnicity">
+              <Input placeholder="Nhập dân tộc bác sĩ" />
+            </Form.Item>
+          </Col>
+
+          {/* Số năm kinh nghiệm từ */}
+          <Col span={6}>
+            <Form.Item label="Số năm kinh nghiệm từ" name="experienceFrom">
+              <InputNumber min={1} max={40} style={inputNumberStyle} />
+            </Form.Item>
+          </Col>
+
+          {/* Số năm kinh nghiệm đến */}
+          <Col span={6}>
+            <Form.Item label="Số năm kinh nghiệm đến" name="experienceTo">
+              <InputNumber min={1} max={40} style={inputNumberStyle} />
+            </Form.Item>
+          </Col>
+
+          {/* Số năm kinh nghiệm từ */}
+          <Col span={6}>
+            <Form.Item label="Số bằng cấp từ" name="certificationFrom">
+              <InputNumber min={1} style={inputNumberStyle} />
+            </Form.Item>
+          </Col>
+
+          {/* Số năm kinh nghiệm đến */}
+          <Col span={6}>
+            <Form.Item label="Số bằng cấp đến" name="certificationTo">
+              <InputNumber min={1} style={inputNumberStyle} />
+            </Form.Item>
+          </Col>
+
           {/*Trình độ */}
-          <Col span={7}>
+          <Col span={6}>
             <Form.Item label="Chọn trình độ" name="degree">
               <Select
                 showSearch
@@ -282,6 +348,34 @@ export default function ListDoctor() {
                     label={option.label}
                   >
                     {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          {/*Chuyên khoa */}
+          <Col span={6}>
+            <Form.Item label="Chọn chuyên khoa" name="majorId">
+              <Select
+                showSearch
+                style={{ width: "100%" }}
+                placeholder="Chọn chuyên khoa"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.label.toLowerCase() ?? "").includes(
+                    input.toLowerCase()
+                  )
+                }
+                filterSort={(optionA, optionB) =>
+                  (optionA?.key ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.key ?? "").toLowerCase())
+                }
+              >
+                {optionMajor.map((option) => (
+                  <Option key={option.id} value={option.id} label={option.name}>
+                    {option.name}
                   </Option>
                 ))}
               </Select>

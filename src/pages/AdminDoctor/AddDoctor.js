@@ -1,8 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import moment from 'moment';
 import {
   Button,
+  Col,
   DatePicker,
   Flex,
   Form,
@@ -10,6 +12,7 @@ import {
   Input,
   InputNumber,
   message,
+  Row,
   Select,
   Space,
   Upload,
@@ -18,7 +21,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
-import {createUser} from "../../services/UserServices";
+import { createUser } from "../../services/UserServices";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -49,25 +52,40 @@ export default function AddDoctor() {
     width: "100%",
   };
 
+  var optionGender = [
+    {
+      value: "Nam",
+      label: "Nam",
+    },
+    {
+      value: "Nữ",
+      label: "Nữ",
+    },
+    {
+      value: "Khác",
+      label: "Khác",
+    },
+  ];
+
   var optionDegree = [
     {
-      value: "1",
+      value: "Giáo sư",
       label: "Giáo sư",
     },
     {
-      value: "2",
+      value: "Tiến sĩ",
       label: "Tiến sĩ",
     },
     {
-      value: "3",
+      value: "Thạc sĩ",
       label: "Thạc sĩ",
     },
     {
-      value: "4",
+      value: "Bác sĩ chuyên khoa",
       label: "Bác sĩ chuyên khoa",
     },
     {
-      value: "5",
+      value: "Bác sĩ",
       label: "Bác sĩ",
     },
   ];
@@ -98,28 +116,31 @@ export default function AddDoctor() {
 
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
-  const formItemLayout = {
-    labelCol: {
-      span: 4,
-    },
-    wrapperCol: {
-      span: 18,
-    },
-  };
-
   const data = {
     id: "1",
-    gmail: "hoangphamhuy275132@gmail.com",
     name: "Phạm Huy Hoàng",
+    dateOfBirth: "2003-07-03",
+    gmail: "hoangphamhuy275132@gmail.com",
     phoneNumber: "0985693949",
     username: "gacon123",
-    dateOfBirth: "07/03/2003",
-    avatar: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQ2dlIj6cKvUV7rgiBMxVKcNnIDV_xWUBgoysWfkz2sJwic6Chv"
+    experience: 2,
+    certification: 3,
+    degree: "GS",
+    major: "Tim mạch",
+    description: "admin tối cao",
+    avatar: "https://taoanhdep.com/wp-content/uploads/2023/10/ai-350x265.jpg",
+    gender: "Nam",
+    address: "Cổ Nhuế 2, Bắc Từ Liêm, Hà Nội",
+    ethnicity: "Kinh",
+    identity: "001203001218"
   };
 
   useEffect(() => {
     if (id.id) {
-      form.setFieldsValue(data);
+      form.setFieldsValue({
+        ...data,
+        dateOfBirth: moment(data.dateOfBirth, 'DD-MM-YYYY'),
+      });
       setFileList([
         {
           uid: `-1`,
@@ -140,7 +161,8 @@ export default function AddDoctor() {
 
   const onFinish = async (values) => {
     values.dateOfBirth = dateOfBirth;
-    values.avatar = "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7"
+    values.avatar =
+      "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
     let finalValues = {
       id: id.id,
       ...values,
@@ -150,7 +172,7 @@ export default function AddDoctor() {
       message.success(response.message);
     } catch (error) {
       message.error("Thất bại");
-      console.error('Failed:', error);
+      console.error("Failed:", error);
     }
     console.log(finalValues);
   };
@@ -166,263 +188,388 @@ export default function AddDoctor() {
   const formAddDoctor = (
     <>
       <Form
-        layout="horizontal"
+        layout="vertical"
         form={form}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
-        {...formItemLayout}
       >
-        {/* Tên bác sĩ*/}
-        <Form.Item
-          label="Tên bác sĩ"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập họ và tên của bác sĩ!",
-            },
-          ]}
-        >
-          <Input placeholder="Nhập tên bác sĩ" />
-        </Form.Item>
-
-        {/* Ngày sinh */}
-        <Form.Item
-          label="Ngày sinh"
-          name="dateOfBirth"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập ngày sinh của bác sĩ!",
-            },
-          ]}
-        >
-          <DatePicker style={datePickkerStyle} onChange={dobChange} />
-        </Form.Item>
-
-        {/* Gmail*/}
-        <Form.Item
-          label="Gmail"
-          name="gmail"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập gmail!",
-            },
-            {
-              type: "email",
-              message: "Hãy nhập đúng định dạng của gmail!",
-            },
-          ]}
-        >
-          <Input placeholder="Nhập gmail" />
-        </Form.Item>
-
-        {/* SĐT */}
-        <Form.Item
-          label="Số điện thoại"
-          name="phoneNumber"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập số điện thoại!",
-            },
-            {
-              pattern: /^[0-9]{0,12}$/,
-              message: "Hãy nhập đúng định dạng số điện thoại!",
-            },
-          ]}
-        >
-          <Input placeholder="Nhập số điện thoại" />
-        </Form.Item>
-
-        {/* Tên đăng nhập*/}
-        <Form.Item
-          label="Tên đăng nhập"
-          name="username"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập tên đăng nhập của bác sĩ!",
-            },
-          ]}
-        >
-          <Input placeholder="Nhập tên đăng nhập của bác sĩ" />
-        </Form.Item>
-
-        {/* Kinh nghiệm*/}
-        <Form.Item
-          label="Kinh nghiệm"
-          name="experience"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập số năm kinh nghiệm của bác sĩ!",
-            },
-          ]}
-        >
-          <InputNumber min={1} max={40} style={inputNumberStyle} />
-        </Form.Item>
-
-        {/* Bằng cấp*/}
-        <Form.Item
-          label="Số bằng cấp"
-          name="certification"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập số bằng cấp của bác sĩ!",
-            },
-          ]}
-        >
-          <InputNumber min={1} style={inputNumberStyle} />
-        </Form.Item>
-
-        {/* Trình độ*/}
-        <Form.Item
-          label="Chọn trình độ"
-          name="degree"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập trình độ bác sĩ!",
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            style={{ width: "100%" }}
-            placeholder="Chon trình độ"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.key ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.key ?? "").toLowerCase())
-            }
-          >
-            {optionDegree.map((option) => (
-              <Option
-                key={option.value}
-                value={option.value}
-                label={option.label}
-              >
-                {option.label}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        {/* Chuyên khoa */}
-        <Form.Item
-          label="Chọn chuyên khoa"
-          name="majorId"
-          rules={[
-            {
-              required: true,
-              message: "Hãy chuyên khoa của bác sĩ!",
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            style={{ width: "100%" }}
-            placeholder="Chọn chuyên khoa"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
-            }
-            filterSort={(optionA, optionB) =>
-              (optionA?.key ?? "")
-                .toLowerCase()
-                .localeCompare((optionB?.key ?? "").toLowerCase())
-            }
-          >
-            {optionMajor.map((option) => (
-              <Option key={option.id} value={option.id} label={option.name}>
-                {option.name}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-
-        {/* Mô tả */}
-        <Form.Item
-          label="Mô tả"
-          name="description"
-          rules={[
-            {
-              required: true,
-              message: "Hãy nhập mô tả của bác sĩ!",
-            },
-          ]}
-        >
-          <Input.TextArea rows={6} showCount maxLength={255} />
-        </Form.Item>
-
-        <Form.Item
-          name="avatar"
-          label="Hình ảnh"
-          valuePropName="fileList"
-          getValueFromEvent={normFile}
-        >
-          <Upload
-            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-            listType="picture-card"
-            fileList={fileList}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            maxCount={1}
-          >
-            {fileList.length >= 1 ? null : (
-              <>
-                <button
-                  style={{
-                    border: 0,
-                    background: "none",
-                  }}
-                  type="button"
+        <Row gutter={60}>
+          <Col span={12}>
+            <Row gutter={24}>
+              {/* Avatar */}
+              <Col span={24}>
+                <Form.Item
+                  name="avatar"
+                  label="Ảnh đại diện"
+                  valuePropName="fileList"
+                  getValueFromEvent={normFile}
                 >
-                  <FontAwesomeIcon icon={faPlus} />
-                  <div>Tải ảnh lên</div>
-                </button>
-              </>
-            )}
-          </Upload>
-          {previewImage && (
-            <Image
-              wrapperStyle={{
-                display: "none",
-              }}
-              preview={{
-                visible: previewOpen,
-                onVisibleChange: (visible) => setPreviewOpen(visible),
-                afterOpenChange: (visible) => !visible && setPreviewImage(""),
-              }}
-              src={previewImage}
-            />
-          )}
-        </Form.Item>
+                  <Upload
+                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}
+                    maxCount={1}
+                  >
+                    {fileList.length >= 1 ? null : (
+                      <>
+                        <button
+                          style={{
+                            border: 0,
+                            background: "none",
+                          }}
+                          type="button"
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                          <div>Tải ảnh lên</div>
+                        </button>
+                      </>
+                    )}
+                  </Upload>
+                  {previewImage && (
+                    <Image
+                      wrapperStyle={{
+                        display: "none",
+                      }}
+                      preview={{
+                        visible: previewOpen,
+                        onVisibleChange: (visible) => setPreviewOpen(visible),
+                        afterOpenChange: (visible) =>
+                          !visible && setPreviewImage(""),
+                      }}
+                      src={previewImage}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
 
-        <Flex justify="center">
-          <Form.Item>
-            <Flex justify="center" gap="large">
-              <Button type="primary" htmlType="submit" size="large">
-                {id.id ? "Cập nhật" : "Thêm"}
-              </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={backToListMajors}
-                size="large"
-              >
-                Quay lại
-              </Button>
-            </Flex>
-          </Form.Item>
-        </Flex>
+              {/* Tên bác sĩ*/}
+              <Col span={12}>
+                <Form.Item
+                  label="Tên bác sĩ"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập họ và tên của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập tên bác sĩ" />
+                </Form.Item>
+              </Col>
+
+              {/* Ngày sinh */}
+              <Col span={12}>
+                <Form.Item
+                  label="Ngày sinh"
+                  name="dateOfBirth"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập ngày sinh của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <DatePicker style={datePickkerStyle} onChange={dobChange} />
+                </Form.Item>
+              </Col>
+
+              {/* Giới tính */}
+              <Col span={12}>
+                <Form.Item
+                  label="Giới tính"
+                  name="gender"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy chọn giới tính của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Select
+                    style={{ width: "100%" }}
+                    placeholder="Chọn giới tính"
+                  >
+                    {optionGender.map((option) => (
+                      <Option
+                        key={option.value}
+                        value={option.value}
+                        label={option.label}
+                      >
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              {/* Số CMT/CCCD */}
+              <Col span={12}>
+                <Form.Item
+                  label="Số CMT/CCCD"
+                  name="identity"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập mã định danh của bác sĩ!",
+                    },
+                    {
+                      pattern: /^[0-9]{12}$/,
+                      message: "Hãy nhập đúng định dạng CMT/CCCD!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập mã định danh bác sĩ" />
+                </Form.Item>
+              </Col>
+
+              {/* Dân tộc*/}
+              <Col span={12}>
+                <Form.Item
+                  label="Dân tộc"
+                  name="ethnicity"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập dân tộc của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập dân tộc bác sĩ" />
+                </Form.Item>
+              </Col>
+
+              {/* SĐT */}
+              <Col span={12}>
+                <Form.Item
+                  label="Số điện thoại"
+                  name="phoneNumber"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập số điện thoại!",
+                    },
+                    {
+                      pattern: /^[0-9]{0,12}$/,
+                      message: "Hãy nhập đúng định dạng số điện thoại!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập số điện thoại" />
+                </Form.Item>
+              </Col>
+
+              {/* Gmail */}
+              <Col span={24}>
+                <Form.Item
+                  label="Gmail"
+                  name="gmail"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập gmail!",
+                    },
+                    {
+                      type: "email",
+                      message: "Hãy nhập đúng định dạng của gmail!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập gmail" />
+                </Form.Item>
+              </Col>
+
+              {/* Địa chỉ*/}
+              <Col span={24}>
+                <Form.Item
+                  label="Địa chỉ"
+                  name="address"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập địa chỉ của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập địa chỉ bác sĩ" />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+
+          <Col span={12}>
+            <Row gutter={24}>
+              {/* Tên đăng nhập*/}
+              <Col span={24}>
+                <Form.Item
+                  label="Tên đăng nhập"
+                  name="username"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập tên đăng nhập của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Input placeholder="Nhập tên đăng nhập của bác sĩ" />
+                </Form.Item>
+              </Col>
+
+              {/* Kinh nghiệm*/}
+              <Col span={12}>
+                <Form.Item
+                  label="Kinh nghiệm"
+                  name="experience"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập số năm kinh nghiệm của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <InputNumber min={1} max={40} style={inputNumberStyle} />
+                </Form.Item>
+              </Col>
+
+              {/* Bằng cấp*/}
+              <Col span={12}>
+                <Form.Item
+                  label="Số bằng cấp"
+                  name="certification"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập số bằng cấp của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <InputNumber min={1} style={inputNumberStyle} />
+                </Form.Item>
+              </Col>
+
+              {/* Trình độ*/}
+              <Col span={12}>
+                <Form.Item
+                  label="Chọn trình độ"
+                  name="degree"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập trình độ bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    style={{ width: "100%" }}
+                    placeholder="Chon trình độ"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label.toLowerCase() ?? "").includes(
+                        input.toLowerCase()
+                      )
+                    }
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.key ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.key ?? "").toLowerCase())
+                    }
+                  >
+                    {optionDegree.map((option) => (
+                      <Option
+                        key={option.value}
+                        value={option.value}
+                        label={option.label}
+                      >
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              {/* Chuyên khoa */}
+              <Col span={12}>
+                <Form.Item
+                  label="Chọn chuyên khoa"
+                  name="majorId"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy chuyên khoa của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    style={{ width: "100%" }}
+                    placeholder="Chọn chuyên khoa"
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label.toLowerCase() ?? "").includes(
+                        input.toLowerCase()
+                      )
+                    }
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.key ?? "")
+                        .toLowerCase()
+                        .localeCompare((optionB?.key ?? "").toLowerCase())
+                    }
+                  >
+                    {optionMajor.map((option) => (
+                      <Option
+                        key={option.id}
+                        value={option.name}
+                        label={option.name}
+                      >
+                        {option.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              {/* Mô tả */}
+              <Col span={24}>
+                <Form.Item
+                  label="Mô tả"
+                  name="description"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Hãy nhập mô tả của bác sĩ!",
+                    },
+                  ]}
+                >
+                  <Input.TextArea rows={6} showCount maxLength={255} />
+                </Form.Item>
+              </Col>
+
+              {/* Nút */}
+              <Col span={24}>
+                <Flex justify="center">
+                  <Form.Item>
+                    <Flex justify="center" gap="large">
+                      <Button type="primary" htmlType="submit" size="large">
+                        {id.id ? "Cập nhật" : "Thêm"}
+                      </Button>
+                      <Button
+                        type="primary"
+                        danger
+                        onClick={backToListMajors}
+                        size="large"
+                      >
+                        Quay lại
+                      </Button>
+                    </Flex>
+                  </Form.Item>
+                </Flex>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Form>
     </>
   );
