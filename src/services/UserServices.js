@@ -14,8 +14,8 @@ export const createUser = (userData) => {
     return post(BASE_URL, userData);
 };
 
-export const updateUser = (id, userData) => {
-    return put(`${BASE_URL}/${id}`, userData);
+export const updateUser = (userData) => {
+    return put(BASE_URL, userData);
 };
 
 export const deleteUser = (id) => {

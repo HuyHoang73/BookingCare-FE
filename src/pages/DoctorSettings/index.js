@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../CustomAntd.css";
-import { createUser } from "../../services/UserServices";
+import { updateUser } from "../../services/UserServices";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -117,7 +117,7 @@ export default function DoctorSetting() {
       ...values,
     };
     try {
-      const response = await createUser(finalValues);
+      const response = await updateUser(finalValues);
       message.success(response.message);
     } catch (error) {
       message.error("Thất bại");

@@ -22,6 +22,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
 import { createUser } from "../../services/UserServices";
+import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -51,59 +52,6 @@ export default function AddDoctor() {
   const datePickkerStyle = {
     width: "100%",
   };
-
-  var optionGender = [
-    {
-      value: "Nam",
-      label: "Nam",
-    },
-    {
-      value: "Nữ",
-      label: "Nữ",
-    },
-    {
-      value: "Khác",
-      label: "Khác",
-    },
-  ];
-
-  var optionDegree = [
-    {
-      value: "Giáo sư",
-      label: "Giáo sư",
-    },
-    {
-      value: "Tiến sĩ",
-      label: "Tiến sĩ",
-    },
-    {
-      value: "Thạc sĩ",
-      label: "Thạc sĩ",
-    },
-    {
-      value: "Bác sĩ chuyên khoa",
-      label: "Bác sĩ chuyên khoa",
-    },
-    {
-      value: "Bác sĩ",
-      label: "Bác sĩ",
-    },
-  ];
-
-  var optionMajor = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
-    },
-  ];
 
   //Gọi khi xem trước ảnh
   const handlePreview = async (file) => {

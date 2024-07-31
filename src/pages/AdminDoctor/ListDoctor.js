@@ -20,70 +20,23 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { createUser } from "../../services/UserServices";
+import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
 
 export default function ListDoctor() {
-  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [dateOfBirthFrom, setDateOfBirthFrom] = useState(null);
+  const [dateOfBirthTo, setDateOfBirthTo] = useState(null);
 
   const inputNumberStyle = {
     width: "100%",
   };
 
-  const dobChange = (date, dateString) => {
-    setDateOfBirth(dateString);
+  const dobFromChange = (date, dateString) => {
+    setDateOfBirthFrom(dateString);
   };
 
-  var optionGender = [
-    {
-      value: "Nam",
-      label: "Nam",
-    },
-    {
-      value: "Nữ",
-      label: "Nữ",
-    },
-    {
-      value: "Khác",
-      label: "Khác",
-    },
-  ];
-
-  var optionMajor = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
-    },
-  ];
-
-  var optionDegree = [
-    {
-      value: "1",
-      label: "Giáo sư",
-    },
-    {
-      value: "2",
-      label: "Tiến sĩ",
-    },
-    {
-      value: "3",
-      label: "Thạc sĩ",
-    },
-    {
-      value: "4",
-      label: "Bác sĩ chuyên khoa",
-    },
-    {
-      value: "5",
-      label: "Bác sĩ",
-    },
-  ];
+  const dobToChange = (date, dateString) => {
+    setDateOfBirthTo(dateString);
+  };
 
   const columns = [
     {
@@ -179,7 +132,8 @@ export default function ListDoctor() {
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
   const onFinish = async (values) => {
-    values.dateOfBirth = dateOfBirth;
+    values.dateOfBirthFrom = dateOfBirthFrom;
+    values.dateOfBirthTo = dateOfBirthTo;
     values.avatar =
       "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
     let finalValues = {
@@ -259,14 +213,14 @@ export default function ListDoctor() {
           {/* Ngày sinh từ*/}
           <Col span={6}>
             <Form.Item label="Ngày sinh từ" name="dateOfBirthFrom">
-              <DatePicker style={inputNumberStyle} onChange={dobChange} />
+              <DatePicker style={inputNumberStyle} onChange={dobFromChange} />
             </Form.Item>
           </Col>
 
           {/* Ngày sinh đến */}
           <Col span={6}>
             <Form.Item label="Ngày sinh đến" name="dateOfBirthTo">
-              <DatePicker style={inputNumberStyle} onChange={dobChange} />
+              <DatePicker style={inputNumberStyle} onChange={dobToChange} />
             </Form.Item>
           </Col>
 
@@ -308,14 +262,14 @@ export default function ListDoctor() {
             </Form.Item>
           </Col>
 
-          {/* Số năm kinh nghiệm từ */}
+          {/* Số bằng cấp từ */}
           <Col span={6}>
             <Form.Item label="Số bằng cấp từ" name="certificationFrom">
               <InputNumber min={1} style={inputNumberStyle} />
             </Form.Item>
           </Col>
 
-          {/* Số năm kinh nghiệm đến */}
+          {/* Số bằng cấp đến */}
           <Col span={6}>
             <Form.Item label="Số bằng cấp đến" name="certificationTo">
               <InputNumber min={1} style={inputNumberStyle} />
@@ -356,7 +310,7 @@ export default function ListDoctor() {
 
           {/*Chuyên khoa */}
           <Col span={6}>
-            <Form.Item label="Chọn chuyên khoa" name="majorId">
+            <Form.Item label="Chọn chuyên khoa" name="major">
               <Select
                 showSearch
                 style={{ width: "100%" }}

@@ -6,6 +6,7 @@ import {
   Flex,
   Form,
   Input,
+  InputNumber,
   Row,
   Select,
   Space,
@@ -20,6 +21,7 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
 
 export default function ListDoctorLeave() {
   const [leaveFrom, setLeaveFrom] = useState(null);
@@ -35,44 +37,6 @@ export default function ListDoctorLeave() {
   const datePickkerStyle = {
     width: "100%",
   };
-
-  var optionMajor = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
-    },
-  ];
-
-  var optionDegree = [
-    {
-      value: "1",
-      label: "Giáo sư",
-    },
-    {
-      value: "2",
-      label: "Tiến sĩ",
-    },
-    {
-      value: "3",
-      label: "Thạc sĩ",
-    },
-    {
-      value: "4",
-      label: "Bác sĩ chuyên khoa",
-    },
-    {
-      value: "5",
-      label: "Bác sĩ",
-    },
-  ];
 
   const columns = [
     {
@@ -177,14 +141,21 @@ export default function ListDoctorLeave() {
       >
         <Row gutter={24}>
           {/* Họ tên */}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item label="Họ và tên" name="name">
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
           </Col>
 
+          {/* Địa chỉ */}
+          <Col span={6}>
+            <Form.Item label="Địa chỉ" name="address">
+              <Input placeholder="Nhập địa chỉ" />
+            </Form.Item>
+          </Col>
+
           {/*Gmail*/}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               label="Gmail"
               name="gmail"
@@ -200,7 +171,7 @@ export default function ListDoctorLeave() {
           </Col>
 
           {/* SĐT */}
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item
               label="Số điện thoại"
               name="phoneNumber"
@@ -215,8 +186,32 @@ export default function ListDoctorLeave() {
             </Form.Item>
           </Col>
 
+          {/* Giới tính */}
+          <Col span={6}>
+            <Form.Item label="Giới tính" name="gender">
+              <Select style={{ width: "100%" }} placeholder="Chọn giới tính">
+                {optionGender.map((option) => (
+                  <Option
+                    key={option.value}
+                    value={option.value}
+                    label={option.label}
+                  >
+                    {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          {/* Dân tộc */}
+          <Col span={6}>
+            <Form.Item label="Dân tộc" name="ethnicity">
+              <Input placeholder="Nhập dân tộc bác sĩ" />
+            </Form.Item>
+          </Col>
+
           {/* Năm rời đi từ */}
-          <Col span={5}>
+          <Col span={6}>
             <Form.Item label="Năm rời đi từ" name="leaveFrom">
               <DatePicker
                 picker="year"
@@ -227,7 +222,7 @@ export default function ListDoctorLeave() {
           </Col>
 
           {/* Năm ròi đi đến */}
-          <Col span={5}>
+          <Col span={6}>
             <Form.Item label="Năm rời đi đến" name="leaveTo">
               <DatePicker
                 picker="year"
@@ -237,36 +232,22 @@ export default function ListDoctorLeave() {
             </Form.Item>
           </Col>
 
-          {/*Chuyên khoa */}
-          <Col span={7}>
-            <Form.Item label="Chọn chuyên khoa" name="majorId">
-              <Select
-                showSearch
-                style={{ width: "100%" }}
-                placeholder="Chọn chuyên khoa"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label.toLowerCase() ?? "").includes(
-                    input.toLowerCase()
-                  )
-                }
-                filterSort={(optionA, optionB) =>
-                  (optionA?.key ?? "")
-                    .toLowerCase()
-                    .localeCompare((optionB?.key ?? "").toLowerCase())
-                }
-              >
-                {optionMajor.map((option) => (
-                  <Option key={option.id} value={option.id} label={option.name}>
-                    {option.name}
-                  </Option>
-                ))}
-              </Select>
+          {/* Số bằng cấp từ */}
+          <Col span={6}>
+            <Form.Item label="Số bằng cấp từ" name="certificationFrom">
+              <InputNumber min={1} style={datePickkerStyle} />
+            </Form.Item>
+          </Col>
+
+          {/* Số bằng cấp đến */}
+          <Col span={6}>
+            <Form.Item label="Số bằng cấp đến" name="certificationTo">
+              <InputNumber min={1} style={datePickkerStyle} />
             </Form.Item>
           </Col>
 
           {/*Trình độ */}
-          <Col span={7}>
+          <Col span={6}>
             <Form.Item label="Chọn trình độ" name="degree">
               <Select
                 showSearch
@@ -291,6 +272,34 @@ export default function ListDoctorLeave() {
                     label={option.label}
                   >
                     {option.label}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          {/*Chuyên khoa */}
+          <Col span={6}>
+            <Form.Item label="Chọn chuyên khoa" name="majorId">
+              <Select
+                showSearch
+                style={{ width: "100%" }}
+                placeholder="Chọn chuyên khoa"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.label.toLowerCase() ?? "").includes(
+                    input.toLowerCase()
+                  )
+                }
+                filterSort={(optionA, optionB) =>
+                  (optionA?.key ?? "")
+                    .toLowerCase()
+                    .localeCompare((optionB?.key ?? "").toLowerCase())
+                }
+              >
+                {optionMajor.map((option) => (
+                  <Option key={option.id} value={option.id} label={option.name}>
+                    {option.name}
                   </Option>
                 ))}
               </Select>

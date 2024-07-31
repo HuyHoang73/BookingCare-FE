@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Option } from "antd/es/mentions";
+import { optionMajor, optionStatus } from "../../utils/DefaultData";
 
 export default function AdminBooking() {
   // eslint-disable-next-line no-unused-vars
@@ -138,40 +139,6 @@ export default function AdminBooking() {
       phone: "0985123456",
       status: "Chờ xử lý",
       timeBooking: "21/7/2024",
-    },
-  ];
-
-  var optionStatus = [
-    {
-      value: "Chưa xác nhận",
-      label: "Chưa xác nhận",
-    },
-    {
-      value: "Chờ xử lý",
-      label: "Chờ xử lý",
-    },
-    {
-      value: "Không tới khám",
-      label: "Không tới khám",
-    },
-    {
-      value: "Thành công",
-      label: "Thành công",
-    },
-  ];
-
-  var optionMajor = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
     },
   ];
 
