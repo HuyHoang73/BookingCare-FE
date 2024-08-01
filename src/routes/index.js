@@ -20,6 +20,7 @@ import DoctorCalendar from "../pages/DoctorCalendar";
 import AdminSetting from "../pages/AdminSetting";
 import DoctorSetting from "../pages/DoctorSettings";
 import Login from "../pages/Login";
+import PrivateRoute from "./PrivateRouter";
 
 export const routes = [
   {
@@ -37,95 +38,100 @@ export const routes = [
       {
         path: "doctors",
         element: <ClientDoctor />,
-      }
-    ]
+      },
+    ],
   },
   {
     path: "/login",
-    element: <Login />
+    element: <Login />,
   },
   {
-    path: "/admin",
-    element: <LayoutAdmin />,
+    element: <PrivateRoute />,
     children: [
       {
-        index: true,
-        element: <AdminHome />
-      },
-      {
-        path: "majors",
-        element: <AdminMajor />,
+        path: "/admin",
+        element: <LayoutAdmin />,
         children: [
           {
             index: true,
-            element : <ListMajor />
+            element: <AdminHome />,
           },
           {
-            path: "create",
-            element: <AddMajor />
+            path: "majors",
+            element: <AdminMajor />,
+            children: [
+              {
+                index: true,
+                element: <ListMajor />,
+              },
+              {
+                path: "create",
+                element: <AddMajor />,
+              },
+              {
+                path: ":id/edit",
+                element: <AddMajor />,
+              },
+            ],
           },
           {
-            path: ":id/edit",
-            element: <AddMajor />
-          }
-        ]
+            path: "doctors",
+            element: <AdminDoctor />,
+            children: [
+              {
+                index: true,
+                element: <ListDoctor />,
+              },
+              {
+                path: "create",
+                element: <AddDoctor />,
+              },
+              {
+                path: ":id/edit",
+                element: <AddDoctor />,
+              },
+              {
+                path: "leave",
+                element: <ListDoctorLeave />,
+              },
+            ],
+          },
+          {
+            path: "bookings",
+            element: <AdminBooking />,
+          },
+          {
+            path: "settings",
+            element: <AdminSetting />,
+          },
+          {
+            path: "articles",
+            element: <AdminArticle />,
+          },
+        ],
       },
       {
-        path: "doctors",
-        element: <AdminDoctor />,
+        path: "/doctor",
+        element: <LayoutDoctor />,
         children: [
           {
             index: true,
-            element: <ListDoctor />
+            element: <DoctorHome />,
           },
           {
-            path: "create",
-            element: <AddDoctor />
+            path: "booking",
+            element: <DoctorBooking />,
           },
           {
-            path: ":id/edit",
-            element: <AddDoctor />
+            path: "calendar",
+            element: <DoctorCalendar />,
           },
           {
-            path: "leave",
-            element: <ListDoctorLeave />
-          }
-        ]
+            path: "settings",
+            element: <DoctorSetting />,
+          },
+        ],
       },
-      {
-        path: "bookings",
-        element: <AdminBooking />
-      },
-      {
-        path: "settings",
-        element: <AdminSetting />
-      },
-      {
-        path: "articles",
-        element: <AdminArticle />
-      }
-    ]
+    ],
   },
-  {
-    path: "/doctor",
-    element: <LayoutDoctor />,
-    children: [
-      {
-        index: true,
-        element: <DoctorHome />
-      },
-      {
-        path: "booking",
-        element: <DoctorBooking />,
-      },
-      {
-        path: "calendar",
-        element: <DoctorCalendar />,
-      },
-      {
-        path: "settings",
-        element: <DoctorSetting />,
-      },
-    ]
-  }
 ];
