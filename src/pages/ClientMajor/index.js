@@ -18,7 +18,7 @@ export default function ClientMajor() {
               placeholder="Nhập tên chuyên khoa"
               onSearch={onSearch}
               enterButton
-              className="major_search"
+              className="search_bar_client"
               size="large"
             />
           </Col>

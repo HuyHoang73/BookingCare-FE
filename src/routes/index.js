@@ -21,6 +21,8 @@ import AdminSetting from "../pages/AdminSetting";
 import DoctorSetting from "../pages/DoctorSettings";
 import Login from "../pages/Login";
 import PrivateRoute from "./PrivateRouter";
+import ListDoctorClient from "../pages/ClientDoctor/ListDoctorClient";
+import DoctorDetail from "../pages/ClientDoctor/DoctorDetail";
 
 export const routes = [
   {
@@ -38,6 +40,16 @@ export const routes = [
       {
         path: "doctors",
         element: <ClientDoctor />,
+        children: [
+          {
+            index: true,
+            element: <ListDoctorClient />,
+          },
+          {
+            path: ":id",
+            element: <DoctorDetail />,
+          }
+        ],
       },
     ],
   },
