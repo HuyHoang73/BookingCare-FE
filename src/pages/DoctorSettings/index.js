@@ -412,7 +412,7 @@ export default function DoctorSetting() {
                   rules={[
                     {
                       required: true,
-                      message: "Hãy chuyên khoa của bác sĩ!",
+                      message: "Hãy nhập chuyên khoa của bác sĩ!",
                     },
                   ]}
                 >

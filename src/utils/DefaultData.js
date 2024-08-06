@@ -56,20 +56,39 @@ export const optionDegree = [
 ];
 
 export const optionStatus = [
-    {
-      value: "Chưa xác nhận",
-      label: "Chưa xác nhận",
-    },
-    {
-      value: "Chờ xử lý",
-      label: "Chờ xử lý",
-    },
-    {
-      value: "Không tới khám",
-      label: "Không tới khám",
-    },
-    {
-      value: "Thành công",
-      label: "Thành công",
-    },
-  ];
+  {
+    value: "Chưa xác nhận",
+    label: "Chưa xác nhận",
+  },
+  {
+    value: "Chờ xử lý",
+    label: "Chờ xử lý",
+  },
+  {
+    value: "Không tới khám",
+    label: "Không tới khám",
+  },
+  {
+    value: "Thành công",
+    label: "Thành công",
+  },
+];
+
+export const optionVocative = [
+  {
+    value: "Ông",
+    label: "Ông",
+  },
+  {
+    value: "Bà",
+    label: "Bà",
+  },
+  {
+    value: "Anh",
+    label: "Chị",
+  },
+  {
+    value: "Chị",
+    label: "Chị",
+  },
+];

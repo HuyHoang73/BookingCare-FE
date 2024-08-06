@@ -35,6 +35,7 @@ export default function DoctorDetail() {
                 <img src={data.avatar} alt={data.name} />
               </div>
             </Col>
+            
             <Col
               lg={{ span: 13, offset: 1 }}
               sm={{ span: 24 }}

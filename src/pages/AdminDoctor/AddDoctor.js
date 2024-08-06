@@ -469,7 +469,7 @@ export default function AddDoctor() {
                     {optionMajor.map((option) => (
                       <Option
                         key={option.id}
-                        value={option.name}
+                        value={option.id}
                         label={option.name}
                       >
                         {option.name}

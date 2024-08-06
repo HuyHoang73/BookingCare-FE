@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
 import { createMajor } from "../../services/MajorServices";
+
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -21,7 +22,7 @@ export default function AddMajor() {
     navigate("/admin/majors");
   };
 
-  const id = useParams();
+  const { id } = useParams();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -57,7 +58,7 @@ export default function AddMajor() {
   };
 
   useEffect(() => {
-    if (id.id) {
+    if (id) {
       form.setFieldsValue(data);
       setFileList([
         {
@@ -68,7 +69,7 @@ export default function AddMajor() {
         },
       ]);
     }
-  }, [id.id, form]);
+  }, [id, form]);
 
   const normFile = (e) => {
     if (Array.isArray(e)) {
@@ -78,26 +79,30 @@ export default function AddMajor() {
   };
 
   const onFinish = async (values) => {
-    values.image =
-      "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
-    let finalValues = {
-      id: id.id,
-      ...values
-    };
+    if (fileList.length === 0) {
+      message.error("Hãy tải ảnh chuyên khoa!");
+      return;
+    }
+
+    const formData = new FormData();
+    if (fileList.length > 0) {
+      formData.append("file", fileList[0].originFileObj);
+    }
+    formData.append("majordto", JSON.stringify(values));
 
     try {
-      const response = await createMajor(finalValues);
-      message.success(response.data);
-      console.log(response)
+      const response = await createMajor(formData);
+      message.success("Đã tạo thành công");
+      console.log(response);
     } catch (error) {
       message.error("Thất bại");
       console.error("Failed:", error);
     }
-    console.log(finalValues);
+    console.log(values);
   };
 
   var onFinishFailed = (errorInfo) => {
-    console.log("errorInfo");
+    console.log(errorInfo);
   };
 
   const formAddMajor = (
@@ -109,7 +114,7 @@ export default function AddMajor() {
         onFinishFailed={onFinishFailed}
         {...formItemLayout}
       >
-        {/* Tên chuyên khoa*/}
+        {/* Tên chuyên khoa */}
         <Form.Item
           label="Tên chuyên khoa"
           name="name"
@@ -134,7 +139,7 @@ export default function AddMajor() {
             },
           ]}
         >
-          <Input placeholder="Nhập mô tả ngắn"/>
+          <Input placeholder="Nhập mô tả ngắn" />
         </Form.Item>
 
         {/* Mô tả */}
@@ -156,20 +161,25 @@ export default function AddMajor() {
           label="Hình ảnh"
           valuePropName="fileList"
           getValueFromEvent={normFile}
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: "Hãy tải ảnh chuyên khoa!",
-          //   },
-          // ]}
         >
           <Upload
-            action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
             listType="picture-card"
             fileList={fileList}
+            beforeUpload={(file) => {
+              if (file.size > 2100000) {
+                message.error("Dung lượng ảnh chỉ được tối đa 2MB");
+                return Upload.LIST_IGNORE;
+              }
+              setFileList([file]);
+              return false;
+            }}
             onPreview={handlePreview}
             onChange={handleChange}
             maxCount={1}
+            customRequest={({ file, onSuccess }) => {
+              setFileList([file]);
+              onSuccess();
+            }}
           >
             {fileList.length >= 1 ? null : (
               <>
@@ -183,6 +193,7 @@ export default function AddMajor() {
                   <FontAwesomeIcon icon={faPlus} />
                   <div>Tải ảnh lên</div>
                 </button>
+                {fileList[0]?.name}
               </>
             )}
           </Upload>
@@ -205,7 +216,7 @@ export default function AddMajor() {
           <Form.Item>
             <Flex justify="center" gap="large">
               <Button type="primary" htmlType="submit" size="large">
-                {id.id ? "Cập nhật" : "Thêm"}
+                {id ? "Cập nhật" : "Thêm"}
               </Button>
               <Button
                 type="primary"
@@ -225,7 +236,7 @@ export default function AddMajor() {
   return (
     <>
       <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-        <h1>{id.id ? "Sửa thông tin chuyên khoa" : "Thêm mới chuyên khoa"}</h1>
+        <h1>{id ? "Sửa thông tin chuyên khoa" : "Thêm mới chuyên khoa"}</h1>
         {formAddMajor}
       </Space>
     </>

@@ -23,6 +23,7 @@ import Login from "../pages/Login";
 import PrivateRoute from "./PrivateRouter";
 import ListDoctorClient from "../pages/ClientDoctor/ListDoctorClient";
 import DoctorDetail from "../pages/ClientDoctor/DoctorDetail";
+import ClientContact from "../pages/ClientContact";
 
 export const routes = [
   {
@@ -36,6 +37,10 @@ export const routes = [
       {
         path: "majors",
         element: <ClientMajor />,
+      },
+      {
+        path: "contact",
+        element: <ClientContact />,
       },
       {
         path: "doctors",

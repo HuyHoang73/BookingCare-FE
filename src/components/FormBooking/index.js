@@ -1,6 +1,7 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import "./FormBooking.css";
 import { Option } from "antd/es/mentions";
+import { optionMajor } from "../../utils/DefaultData";
 
 export default function FormBooking({
   isFormBookingOpen,
@@ -10,33 +11,6 @@ export default function FormBooking({
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
-
-  var optionMajor = [
-    {
-      value: "1",
-      label: "Tim mạch",
-    },
-    {
-      value: "2",
-      label: "Thần kinh",
-    },
-    {
-      value: "3",
-      label: "Phụ sản",
-    },
-    {
-      value: "4",
-      label: "Dinh dưỡng",
-    },
-    {
-      value: "5",
-      label: "Mắt",
-    },
-    {
-      value: "6",
-      label: "Tiêu hóa",
-    },
-  ];
 
   var optionDoctor = [
     {
@@ -238,8 +212,8 @@ export default function FormBooking({
               >
                 {optionMajor.map((option) => (
                   <Option
-                    key={option.value}
-                    value={option.value}
+                    key={option.id}
+                    value={option.id}
                     label={option.label}
                   >
                     {option.label}

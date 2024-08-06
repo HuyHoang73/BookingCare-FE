@@ -65,7 +65,7 @@ export default function Header() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="navbar_client_link">
+                  <Link to="/contact" className="navbar_client_link">
                     Liên hệ
                   </Link>
                 </li>
@@ -106,17 +106,17 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/" className="navbar_client_link">
+                <Link to="/majors" className="navbar_client_link">
                   Chuyên khoa
                 </Link>
               </li>
               <li>
-                <Link to="/" className="navbar_client_link">
+                <Link to="/doctors" className="navbar_client_link">
                   Chuyên gia - Bác sĩ
                 </Link>
               </li>
               <li>
-                <Link to="/" className="navbar_client_link">
+                <Link to="/contact" className="navbar_client_link">
                   Liên hệ
                 </Link>
               </li>

@@ -1,4 +1,5 @@
-import { get, post, put, del } from '../utils/api';
+import { get, put, del } from '../utils/api';
+import axios from '../utils/axiosConfig';
 
 const BASE_URL = '/api/majors';
 
@@ -11,7 +12,11 @@ export const getMajorById = (id) => {
 };
 
 export const createMajor = (majorData) => {
-    return post(BASE_URL, majorData);
+    return axios.post(BASE_URL, majorData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 };
 
 export const updateMajor = (majorData) => {
