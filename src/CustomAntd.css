@@ -48,6 +48,14 @@
     inset-inline-start: 10% !important;
 }
 
+.ant-modal-title {
+    font-size: 25px !important;
+}
+
+.ant-modal-body {
+    font-size: 18px !important;
+}
+
 .ant-timeline-item-content {
     inset-inline-start: calc(10% + 30px) !important;
     width: calc(90% - 40px) !important;

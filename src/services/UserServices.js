@@ -1,4 +1,5 @@
-import { get, post, put, del } from '../utils/api';
+import { get, put, del } from '../utils/api';
+import axios from '../utils/axiosConfig';
 
 const BASE_URL = '/api/users';
 
@@ -11,7 +12,11 @@ export const getUserById = (id) => {
 };
 
 export const createUser = (userData) => {
-    return post(BASE_URL, userData);
+    return axios.post(BASE_URL, userData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 };
 
 export const updateUser = (userData) => {

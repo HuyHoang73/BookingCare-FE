@@ -6,14 +6,16 @@ import {
   Form,
   Input,
   InputNumber,
+  Modal,
   Row,
   Space,
   Table,
 } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCircleExclamation, faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import "../../CustomAntd.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function ListMajor() {
   const navigate = useNavigate();
@@ -21,6 +23,15 @@ export default function ListMajor() {
   const goToAddMajor = () => {
     navigate("/admin/majors/create"); 
   }
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
   const inputNumberStyle = {
     width: "100%",
@@ -63,6 +74,7 @@ export default function ListMajor() {
             type="primary"
             icon={<FontAwesomeIcon icon={faTrash} />}
             danger
+            onClick={openModal}
           >
             Xóa
           </Button>
@@ -181,6 +193,45 @@ export default function ListMajor() {
           bordered="true"
         />
       </Space>
+
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleExclamation}
+              style={{
+                color: "#FF4D4F",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalOpen}
+        onOk={handleOk}
+        centered
+        width={600}
+        footer={[
+          <Button type="primary" size="large" ghost onClick={handleOk}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" danger onClick={handleOk}>
+            Xóa
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn có chắc chắn muốn xóa chuyên khoa này?
+        </p>
+      </Modal>
     </>
   );
 }

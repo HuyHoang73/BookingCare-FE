@@ -15,6 +15,8 @@ import "../../CustomAntd.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
   faCircleXmark,
   faEye,
   faMagnifyingGlass,
@@ -34,6 +36,23 @@ export default function DoctorBooking() {
   };
   const dayBookingToChange = (date, dateString) => {
     setDayBookingTo(dateString);
+  };
+
+  const [isModalDeny, setIsModalDeny] = useState(false);
+  const closeDenyModal = () => {
+    setIsModalDeny(false);
+  };
+  const openDenyModal = () => {
+    setIsModalDeny(true);
+  };
+
+  const [isModalConfirm, setIsModalConfirm] = useState(false);
+  const closeConfirmModal = () => {
+    setIsModalConfirm(false);
+  };
+
+  const openConfirmModal = () => {
+    setIsModalConfirm(true);
   };
 
   const datePickkerStyle = {
@@ -113,7 +132,7 @@ export default function DoctorBooking() {
           <Button
             type="primary"
             icon={<FontAwesomeIcon icon={faCircleCheck} />}
-            onClick={() => isFormBookingOpen(record)}
+            onClick={openConfirmModal}
             title="Chấp nhận"
             size="large"
           ></Button>
@@ -121,7 +140,7 @@ export default function DoctorBooking() {
           <Button
             type="primary"
             icon={<FontAwesomeIcon icon={faCircleXmark} />}
-            onClick={() => isFormBookingOpen(record)}
+            onClick={openDenyModal}
             title="Từ chối"
             danger
             size="large"
@@ -300,6 +319,7 @@ export default function DoctorBooking() {
           bordered="true"
         />
       </Space>
+
       <Modal
         title={<p className="ant-modal-title">Thông tin lịch khám</p>}
         open={isModalOpen}
@@ -347,6 +367,84 @@ export default function DoctorBooking() {
             </Form.Item>
           </Form>
         )}
+      </Modal>
+
+      {/* Alert Deny */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleExclamation}
+              style={{
+                color: "#FF4D4F",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalDeny}
+        centered
+        width={600}
+        footer={[
+          <Button type="primary" size="large" ghost onClick={closeDenyModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" danger onClick={closeDenyModal}>
+            Từ chối
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn có chắc chắn muốn từ chối lịch hẹn này?
+        </p>
+      </Modal>
+
+      {/* Alert Confirm Password */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{
+                color: "#1677FF",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalConfirm}
+        centered
+        width={650}
+        footer={[
+          <Button type="primary" size="large" danger ghost onClick={closeConfirmModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" onClick={closeConfirmModal}>
+            Đồng ý
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn có chắc chắn muốn khám bệnh cho lịch hẹn này?
+        </p>
       </Modal>
     </>
   );

@@ -3,10 +3,10 @@ import {
   Col,
   Collapse,
   DatePicker,
-  Flex,
   Form,
   Input,
   InputNumber,
+  Modal,
   Row,
   Select,
   Space,
@@ -14,11 +14,10 @@ import {
 } from "antd";
 import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRotateRight,
-  faUserPlus,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
@@ -34,6 +33,15 @@ export default function ListDoctorLeave() {
     setLeaveTo(dateString);
   };
 
+  const [isModalRecover, setIsModalRecover] = useState(false);
+  const closeRecoverModal = () => {
+    setIsModalRecover(false);
+  };
+
+  const openRecoverModal = () => {
+    setIsModalRecover(true);
+  };
+
   const datePickkerStyle = {
     width: "100%",
   };
@@ -42,6 +50,16 @@ export default function ListDoctorLeave() {
     {
       title: "Họ tên",
       dataIndex: "name",
+      align: "center",
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "dateOfBirth",
+      align: "center",
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
       align: "center",
     },
     {
@@ -85,6 +103,7 @@ export default function ListDoctorLeave() {
           <Button
             type="primary"
             icon={<FontAwesomeIcon icon={faArrowRotateRight} />}
+            onClick={openRecoverModal}
           >
             Khôi phục
           </Button>
@@ -97,13 +116,15 @@ export default function ListDoctorLeave() {
 
   const data = [
     {
-      id: "1",
+      id: "abc",
       gmail: "hoangphamhuy275132@gmail.com",
       name: "Phạm Huy Hoàng",
       phoneNumber: "0985693949",
       experience: 15,
       certification: 25,
       degree: "GS",
+      gender: "Nam",
+      dateOfBirth : "07/03/2003"
     },
     {
       id: "2",
@@ -113,6 +134,52 @@ export default function ListDoctorLeave() {
       experience: 5,
       certification: 1,
       degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "3",
+      name: "Trần Đình Hoan",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "4",
+      name: "Đỗ Văn Hùng",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "5",
+      name: "Lê Tuấn Hưng",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "6",
+      name: "Đào Xuân Đông",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
     },
   ];
 
@@ -328,7 +395,7 @@ export default function ListDoctorLeave() {
 
   return (
     <>
-      <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+      <Space direction="vertical" size="large" style={{ display: "flex" }}>
         <h1>Danh sách bác sĩ</h1>
         <Collapse
           className="custom-collapse"
@@ -336,17 +403,7 @@ export default function ListDoctorLeave() {
           expandIconPosition="end"
           items={items}
         />
-        <Flex justify="flex-end">
-          <Link to="/admin/doctors/create">
-            <Button
-              type="primary"
-              icon={<FontAwesomeIcon icon={faUserPlus} />}
-              size="large"
-            >
-              Thêm mới
-            </Button>
-          </Link>
-        </Flex>
+
         <Table
           columns={columns}
           dataSource={dataWithKey}
@@ -354,6 +411,45 @@ export default function ListDoctorLeave() {
           bordered="true"
         />
       </Space>
+
+      {/* Alert Recover Password */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{
+                color: "#1677FF",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalRecover}
+        centered
+        width={600}
+        footer={[
+          <Button type="primary" size="large" danger ghost onClick={closeRecoverModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" onClick={closeRecoverModal}>
+            Khôi phục
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn có chắc chắn muốn khôi phục bác sĩ này?
+        </p>
+      </Modal>
     </>
   );
 }

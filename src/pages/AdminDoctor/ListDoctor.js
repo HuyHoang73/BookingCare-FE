@@ -8,6 +8,7 @@ import {
   Input,
   InputNumber,
   message,
+  Modal,
   Row,
   Select,
   Space,
@@ -17,14 +18,41 @@ import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleExclamation,
+  faCircleInfo,
+  faPen,
+  faRotateLeft,
+  faTrash,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { createUser } from "../../services/UserServices";
-import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
+import {
+  optionDegree,
+  optionGender,
+  optionMajor,
+} from "../../utils/DefaultData";
 
 export default function ListDoctor() {
   const [dateOfBirthFrom, setDateOfBirthFrom] = useState(null);
   const [dateOfBirthTo, setDateOfBirthTo] = useState(null);
+  const [isModalDelete, setIsModalDelete] = useState(false);
+  const closeDeleteModal = () => {
+    setIsModalDelete(false);
+  };
+  const openDeleteModal = () => {
+    setIsModalDelete(true);
+  };
+
+  const [isModalReset, setIsModalReset] = useState(false);
+  const closeResetModal = () => {
+    setIsModalReset(false);
+  };
+
+  const openReseteModal = () => {
+    setIsModalReset(true);
+  };
 
   const inputNumberStyle = {
     width: "100%",
@@ -42,6 +70,11 @@ export default function ListDoctor() {
     {
       title: "Họ tên",
       dataIndex: "name",
+      align: "center",
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "dateOfBirth",
       align: "center",
     },
     {
@@ -86,22 +119,32 @@ export default function ListDoctor() {
       title: "Hành động",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
+        <Space size="small">
           <Link to={`${record.id}/edit`}>
-            <Button type="primary" icon={<FontAwesomeIcon icon={faPen} />}>
-              Sửa
-            </Button>
+            <Button
+              type="primary"
+              icon={<FontAwesomeIcon icon={faPen} />}
+              title="Sửa"
+            />
           </Link>
+
+          <Button
+            type="primary"
+            icon={<FontAwesomeIcon icon={faRotateLeft} />}
+            title="Đặt lại mật khẩu"
+            onClick={openReseteModal}
+          />
+
           <Button
             type="primary"
             icon={<FontAwesomeIcon icon={faTrash} />}
             danger
-          >
-            Xóa
-          </Button>
+            title="Xóa"
+            onClick={openDeleteModal}
+          />
         </Space>
       ),
-      width: "15%",
+      width: "10%",
       align: "center",
     },
   ];
@@ -115,7 +158,8 @@ export default function ListDoctor() {
       experience: 15,
       certification: 25,
       degree: "GS",
-      gender: "Nam"
+      gender: "Nam",
+      dateOfBirth : "07/03/2003"
     },
     {
       id: "2",
@@ -125,7 +169,52 @@ export default function ListDoctor() {
       experience: 5,
       certification: 1,
       degree: "BS",
-      gender: "Nam"
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "3",
+      name: "Trần Đình Hoan",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "4",
+      name: "Đỗ Văn Hùng",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "5",
+      name: "Lê Tuấn Hưng",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
+    },
+    {
+      id: "6",
+      name: "Đào Xuân Đông",
+      gmail: "hungtuancn@gmail.com",
+      phoneNumber: "0959493949",
+      experience: 5,
+      certification: 1,
+      degree: "BS",
+      gender: "Nam",
+      dateOfBirth : "18/05/2003"
     },
   ];
 
@@ -384,6 +473,84 @@ export default function ListDoctor() {
           bordered="true"
         />
       </Space>
+
+      {/* Alert Delete */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleExclamation}
+              style={{
+                color: "#FF4D4F",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalDelete}
+        centered
+        width={600}
+        footer={[
+          <Button type="primary" size="large" ghost onClick={closeDeleteModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" danger onClick={closeDeleteModal}>
+            Xóa
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn có chắc chắn muốn xóa bác sĩ này?
+        </p>
+      </Modal>
+
+      {/* Alert Reset Password */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{
+                color: "#1677FF",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalReset}
+        centered
+        width={650}
+        footer={[
+          <Button type="primary" size="large" danger ghost onClick={closeResetModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" onClick={closeResetModal}>
+            Đặt lại
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Bạn chắc chắn muốn đặt lại mật khẩu cho bác sĩ này?
+        </p>
+      </Modal>
     </>
   );
 }
