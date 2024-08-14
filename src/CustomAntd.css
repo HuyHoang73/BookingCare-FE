@@ -60,3 +60,9 @@
     inset-inline-start: calc(10% + 30px) !important;
     width: calc(90% - 40px) !important;
 }
+
+.ant-statistic-title {
+    font-size: 19px !important;
+    font-weight: bold !important;
+    color: rgb(17, 17, 17);
+}

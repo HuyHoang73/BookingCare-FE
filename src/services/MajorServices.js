@@ -1,10 +1,10 @@
-import { get, put, del } from '../utils/api';
+import { get, del, post } from '../utils/api';
 import axios from '../utils/axiosConfig';
 
 const BASE_URL = '/api/majors';
 
-export const getAllMajors = () => {
-    return get(BASE_URL);
+export const getAllMajors = (data) => {
+    return post(`${BASE_URL}/search`, data);
 };
 
 export const getMajorById = (id) => {
@@ -20,7 +20,11 @@ export const createMajor = (majorData) => {
 };
 
 export const updateMajor = (majorData) => {
-    return put(BASE_URL, majorData);
+    return axios.put(BASE_URL, majorData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 };
 
 export const deleteMajor = (id) => {

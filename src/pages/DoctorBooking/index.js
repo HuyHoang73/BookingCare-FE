@@ -23,19 +23,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Option } from "antd/es/mentions";
+import { optionStatus } from "../../utils/DefaultData";
 
 export default function DoctorBooking() {
   // eslint-disable-next-line no-unused-vars
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [dayBookingFrom, setDayBookingFrom] = useState(null);
-  const [dayBookingTo, setDayBookingTo] = useState(null);
+  const [dateBookingFrom, setdateBookingFrom] = useState(null);
+  const [dateBookingTo, setdateBookingTo] = useState(null);
 
-  const dayBookingFromChange = (date, dateString) => {
-    setDayBookingFrom(dateString);
+  const dateBookingFromChange = (date, dateString) => {
+    setdateBookingFrom(dateString);
   };
-  const dayBookingToChange = (date, dateString) => {
-    setDayBookingTo(dateString);
+  const dateBookingToChange = (date, dateString) => {
+    setdateBookingTo(dateString);
   };
 
   const [isModalDeny, setIsModalDeny] = useState(false);
@@ -73,7 +74,7 @@ export default function DoctorBooking() {
   const columns = [
     {
       title: "Ngày tạo",
-      dataIndex: "createDate",
+      dataIndex: "createdDate",
       align: "center",
     },
     {
@@ -93,7 +94,7 @@ export default function DoctorBooking() {
     },
     {
       title: "SĐT",
-      dataIndex: "phone",
+      dataIndex: "phoneNumber",
       align: "center",
     },
     {
@@ -155,7 +156,7 @@ export default function DoctorBooking() {
   const data = [
     {
       id: "1",
-      createDate: "20/7/2024",
+      createdDate: "20/7/2024",
       dateOfBirth: "09/03/2003",
       major: "Gan",
       doctor: "Gà Con",
@@ -163,49 +164,30 @@ export default function DoctorBooking() {
       fullname: "Phạm Huy Hoàng",
       gender: "Nam",
       note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
+      phoneNumber: "0985693949",
       status: "Chờ xử lý",
       timeBooking: "9h - 10h",
-      dayBooking: "23/7/2024"
+      dateBooking: "23/7/2024"
     },
     {
       id: "2",
-      createDate: "10/7/2024",
+      createdDate: "10/7/2024",
       dateOfBirth: "18/05/2003",
       major: "Nam khoa",
       doctor: "Bảnk",
       gmail: "hungtuancn@gmail.com",
       fullname: "Cù",
-      phone: "0985123456",
+      phoneNumber: "0985123456",
       status: "Chờ xử lý",
       timeBooking: "21/7/2024",
     },
   ];
-
-  var optionStatus = [
-    {
-      value: "Chưa xác nhận",
-      label: "Chưa xác nhận",
-    },
-    {
-      value: "Chờ xử lý",
-      label: "Chờ xử lý",
-    },
-    {
-      value: "Không tới khám",
-      label: "Không tới khám",
-    },
-    {
-      value: "Thành công",
-      label: "Thành công",
-    },
-  ];
-
+  
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
   var onFinish = (values) => {
-    values.dayBookingFrom = dayBookingFrom;
-    values.dayBookingTo = dayBookingTo;
+    values.dateBookingFrom = dateBookingFrom;
+    values.dateBookingTo = dateBookingTo;
     let finalValues = { ...values };
     console.log("sucess", finalValues);
   };
@@ -227,20 +209,20 @@ export default function DoctorBooking() {
         <Row gutter={24}>
           {/* Ngày đặt từ */}
           <Col span={8}>
-            <Form.Item label="Ngày đặt từ" name="dayBookingFrom">
+            <Form.Item label="Ngày đặt từ" name="dateBookingFrom">
               <DatePicker
                 style={datePickkerStyle}
-                onChange={dayBookingFromChange}
+                onChange={dateBookingFromChange}
               />
             </Form.Item>
           </Col>
 
           {/* Ngày đặt đến */}
           <Col span={8}>
-            <Form.Item label="Ngày đặt đến" name="dayBookingTo">
+            <Form.Item label="Ngày đặt đến" name="dateBookingTo">
               <DatePicker
                 style={datePickkerStyle}
-                onChange={dayBookingToChange}
+                onChange={dateBookingToChange}
               />
             </Form.Item>
           </Col>
@@ -348,7 +330,7 @@ export default function DoctorBooking() {
               <Input value={selectedBooking.gmail} readOnly />
             </Form.Item>
             <Form.Item label="Số điện thoại">
-              <Input value={selectedBooking.phone} readOnly />
+              <Input value={selectedBooking.phoneNumber} readOnly />
             </Form.Item>
             <Form.Item label="Khoa khám">
               <Input value={selectedBooking.major} readOnly />
@@ -357,7 +339,7 @@ export default function DoctorBooking() {
               <Input value={selectedBooking.doctor} readOnly />
             </Form.Item>
             <Form.Item label="Thời gian khám">
-              <Input value={selectedBooking.dayBooking + " : " + selectedBooking.timeBooking} readOnly />
+              <Input value={selectedBooking.dateBooking + " : " + selectedBooking.timeBooking} readOnly />
             </Form.Item>
             <Form.Item label="Mô tả">
               <Input.TextArea rows={4} value={selectedBooking.note} readOnly />

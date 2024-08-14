@@ -15,9 +15,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation, faPen, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import "../../CustomAntd.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllMajors } from "../../services/MajorServices";
 
 export default function ListMajor() {
+  const [data, setData] = useState([])
   const navigate = useNavigate();
 
   const goToAddMajor = () => {
@@ -85,29 +87,45 @@ export default function ListMajor() {
     },
   ];
 
-  const data = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setData(result.data);
+      } else {
+        setData([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  // const data = [
+  //   {
+  //     id: "1",
+  //     name: "Tim mạch",
+  //     numberOfDoctor: 100,
+  //     shortDescription: "Khám tim nè",
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Răng",
+  //     numberOfDoctor: 105,
+  //     shortDescription: "Nhổ răng nè",
+  //   },
+  // ];
 
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
-  var onFinish = (values) => {
-    let finalValues = {};
-    finalValues.name = values.name;
-    finalValues.numberOfDoctorFrom = values.numberOfDoctorFrom;
-    finalValues.numberOfDoctorTo = values.numberOfDoctorTo;
-    console.log("sucess", finalValues);
+  var onFinish = async (values) => {
+    let finalValues = {...values};
+    try {
+      const response = await getAllMajors(finalValues);
+      setData(response.data);
+      console.log(data);
+    } catch (error) {
+      console.error("Failed:", error);
+    }
+    console.log("Success", finalValues);
   };
 
   var onFinishFailed = (errorInfo) => {

@@ -1,47 +1,73 @@
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from "antd";
 import "./FormBooking.css";
 import { Option } from "antd/es/mentions";
-import { optionMajor } from "../../utils/DefaultData";
-import { useState } from "react";
-// import { createBooking } from "../../services/BookingServices";
+import { useEffect, useState } from "react";
+import { createBooking } from "../../services/BookingServices";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { getAllMajors } from "../../services/MajorServices";
+import { getAllUsers } from "../../services/UserServices";
 
 export default function FormBooking({
   isFormBookingOpen,
   handleOkFormBooking,
   handleCancelFormBooking,
 }) {
+  const [optionDoctor, setOptionDoctor] = useState([]);
+  const [optionMajor, setOptionMajor] = useState([]);
   const onChange = (date, dateString) => {
     console.log(date, dateString);
   };
 
-  var optionDoctor = [
-    {
-      value: "1",
-      label: "Phạm Huy Hoàng",
-    },
-    {
-      value: "2",
-      label: "Lê Hoàng Minh Hà",
-    },
-    {
-      value: "3",
-      label: "Trần Phương Lan",
-    },
-    {
-      value: "4",
-      label: "Lê Minh Phương",
-    },
-    {
-      value: "5",
-      label: "Vũ Phương Thảo",
-    },
-    {
-      value: "6",
-      label: "Nguyễn Hồng Nhung",
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setOptionMajor(result.data);
+        console.log(result.data)
+      } else {
+        setOptionMajor([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  const changeMajor = async (value) => {
+    try {
+      const response = await getAllUsers({ major: value, status: 1 });
+      setOptionDoctor(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Failed:", error);
+    }
+  };
+
+  // var optionDoctor = [
+  //   {
+  //     value: "1",
+  //     label: "Phạm Huy Hoàng",
+  //   },
+  //   {
+  //     value: "2",
+  //     label: "Lê Hoàng Minh Hà",
+  //   },
+  //   {
+  //     value: "3",
+  //     label: "Trần Phương Lan",
+  //   },
+  //   {
+  //     value: "4",
+  //     label: "Lê Minh Phương",
+  //   },
+  //   {
+  //     value: "5",
+  //     label: "Vũ Phương Thảo",
+  //   },
+  //   {
+  //     value: "6",
+  //     label: "Nguyễn Hồng Nhung",
+  //   },
+  // ];
 
   var optionTime = [
     {
@@ -76,25 +102,18 @@ export default function FormBooking({
   };
 
   var onFinish = async (values) => {
-    let finalValues = {};
-    finalValues.fullname = values.fullname;
-    finalValues.dateOfBirth = values.dateOfBirth.format("DD-MM-YYYY");
-    finalValues.gmail = values.gmail;
-    finalValues.phoneNumber = values.phoneNumber;
-    finalValues.address = values.address;
-    finalValues.majorId = values.majorId;
-    finalValues.doctorId = values.doctorId;
-    finalValues.dateBooking = values.dateBooking.format("DD-MM-YYYY");
-    finalValues.timeBookingId = values.timeBookingId;
-    console.log("success", finalValues);
+    values.dateOfBirth = values.dateOfBirth.format("DD-MM-YYYY");
+    values.dateBooking = values.dateBooking.format("DD-MM-YYYY");
     setIsModalOpen(true);
-    // try {
-    //   const response = await createBooking(finalValues);
-    //   setIsModalOpen(true);
-    //   console.log(response);
-    // } catch (error) {
-    //   console.error("Failed:", error);
-    // }
+    console.log(values);
+    try {
+      const response = await createBooking(values);
+      setIsModalOpen(true);
+      console.log(response);
+      console.log("success", values);
+    } catch (error) {
+      console.error("Failed:", error);
+    }
     handleOkFormBooking();
   };
 
@@ -221,6 +240,7 @@ export default function FormBooking({
                 showSearch
                 style={{ width: "100%" }}
                 placeholder="Chon chuyên khoa"
+                onChange={changeMajor}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   (option?.label.toLowerCase() ?? "").includes(
@@ -237,9 +257,9 @@ export default function FormBooking({
                   <Option
                     key={option.id}
                     value={option.id}
-                    label={option.label}
+                    label={option.name}
                   >
-                    {option.label}
+                    {option.name}
                   </Option>
                 ))}
               </Select>
@@ -274,11 +294,11 @@ export default function FormBooking({
               >
                 {optionDoctor.map((option) => (
                   <Option
-                    key={option.value}
-                    value={option.value}
-                    label={option.label}
+                    key={option.id}
+                    value={option.id}
+                    label={option.name}
                   >
-                    {option.label}
+                    {option.name}
                   </Option>
                 ))}
               </Select>

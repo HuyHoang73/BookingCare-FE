@@ -26,23 +26,49 @@ import {
   faTrash,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { createUser } from "../../services/UserServices";
+import { useEffect, useState } from "react";
+import { deleteUser, getAllUsers } from "../../services/UserServices";
 import {
   optionDegree,
   optionGender,
-  optionMajor,
 } from "../../utils/DefaultData";
+import { getAllMajors } from "../../services/MajorServices";
 
 export default function ListDoctor() {
   const [dateOfBirthFrom, setDateOfBirthFrom] = useState(null);
   const [dateOfBirthTo, setDateOfBirthTo] = useState(null);
+  const [optionMajor, setOptionMajor] = useState([]);
+  const [data, setData] = useState([]);
   const [isModalDelete, setIsModalDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const closeDeleteModal = () => {
     setIsModalDelete(false);
   };
-  const openDeleteModal = () => {
+  const openDeleteModal = (id) => {
+    setDeleteId(id);
     setIsModalDelete(true);
+  };
+
+  const deleteDoctor = async () => {
+    if (deleteId) {
+      try {
+        await deleteUser(deleteId);
+        const fetchApi = async () => {
+          const result = await getAllUsers({"status": 1});
+          if (Array.isArray(result.data)) {
+            setData(result.data);
+          } else {
+            setData([]);
+          }
+        };
+        fetchApi();
+        message.success("Thành công!")
+        closeDeleteModal();
+      } catch (error) {
+        console.error("Failed to delete doctor:", error);
+        message.error("Thất bại.")
+      }
+    }
   };
 
   const [isModalReset, setIsModalReset] = useState(false);
@@ -140,7 +166,7 @@ export default function ListDoctor() {
             icon={<FontAwesomeIcon icon={faTrash} />}
             danger
             title="Xóa"
-            onClick={openDeleteModal}
+            onClick={() => openDeleteModal(record.id)}
           />
         </Space>
       ),
@@ -149,93 +175,115 @@ export default function ListDoctor() {
     },
   ];
 
-  const data = [
-    {
-      id: "abc",
-      gmail: "hoangphamhuy275132@gmail.com",
-      name: "Phạm Huy Hoàng",
-      phoneNumber: "0985693949",
-      experience: 15,
-      certification: 25,
-      degree: "GS",
-      gender: "Nam",
-      dateOfBirth : "07/03/2003"
-    },
-    {
-      id: "2",
-      name: "Cù Ngọc Tuấn Hưng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth : "18/05/2003"
-    },
-    {
-      id: "3",
-      name: "Trần Đình Hoan",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth : "18/05/2003"
-    },
-    {
-      id: "4",
-      name: "Đỗ Văn Hùng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth : "18/05/2003"
-    },
-    {
-      id: "5",
-      name: "Lê Tuấn Hưng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth : "18/05/2003"
-    },
-    {
-      id: "6",
-      name: "Đào Xuân Đông",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth : "18/05/2003"
-    },
-  ];
+  // const data = [
+  //   {
+  //     id: "abc",
+  //     gmail: "hoangphamhuy275132@gmail.com",
+  //     name: "Phạm Huy Hoàng",
+  //     phoneNumber: "0985693949",
+  //     experience: 15,
+  //     certification: 25,
+  //     degree: "GS",
+  //     gender: "Nam",
+  //     dateOfBirth : "07/03/2003"
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Cù Ngọc Tuấn Hưng",
+  //     gmail: "hungtuancn@gmail.com",
+  //     phoneNumber: "0959493949",
+  //     experience: 5,
+  //     certification: 1,
+  //     degree: "BS",
+  //     gender: "Nam",
+  //     dateOfBirth : "18/05/2003"
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Trần Đình Hoan",
+  //     gmail: "hungtuancn@gmail.com",
+  //     phoneNumber: "0959493949",
+  //     experience: 5,
+  //     certification: 1,
+  //     degree: "BS",
+  //     gender: "Nam",
+  //     dateOfBirth : "18/05/2003"
+  //   },
+  //   {
+  //     id: "4",
+  //     name: "Đỗ Văn Hùng",
+  //     gmail: "hungtuancn@gmail.com",
+  //     phoneNumber: "0959493949",
+  //     experience: 5,
+  //     certification: 1,
+  //     degree: "BS",
+  //     gender: "Nam",
+  //     dateOfBirth : "18/05/2003"
+  //   },
+  //   {
+  //     id: "5",
+  //     name: "Lê Tuấn Hưng",
+  //     gmail: "hungtuancn@gmail.com",
+  //     phoneNumber: "0959493949",
+  //     experience: 5,
+  //     certification: 1,
+  //     degree: "BS",
+  //     gender: "Nam",
+  //     dateOfBirth : "18/05/2003"
+  //   },
+  //   {
+  //     id: "6",
+  //     name: "Đào Xuân Đông",
+  //     gmail: "hungtuancn@gmail.com",
+  //     phoneNumber: "0959493949",
+  //     experience: 5,
+  //     certification: 1,
+  //     degree: "BS",
+  //     gender: "Nam",
+  //     dateOfBirth : "18/05/2003"
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setOptionMajor(result.data);
+      } else {
+        setOptionMajor([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllUsers({"status": 1});
+      if (Array.isArray(result.data)) {
+        setData(result.data);
+      } else {
+        setData([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
   const onFinish = async (values) => {
     values.dateOfBirthFrom = dateOfBirthFrom;
     values.dateOfBirthTo = dateOfBirthTo;
-    values.avatar =
-      "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
     let finalValues = {
       ...values,
     };
     try {
-      const response = await createUser(finalValues);
-      message.success(response.message);
+      const response = await getAllUsers(finalValues);
+      setData(response.data);
+      console.log(data);
     } catch (error) {
-      message.error("Thất bại");
       console.error("Failed:", error);
     }
-    console.log(finalValues);
+    console.log("Success", finalValues);
   };
 
   var onFinishFailed = (errorInfo) => {
@@ -496,7 +544,7 @@ export default function ListDoctor() {
           <Button type="primary" size="large" ghost onClick={closeDeleteModal}>
             Hủy
           </Button>,
-          <Button type="primary" size="large" danger onClick={closeDeleteModal}>
+          <Button type="primary" size="large" danger onClick={deleteDoctor}>
             Xóa
           </Button>,
         ]}

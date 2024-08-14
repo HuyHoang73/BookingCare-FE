@@ -21,6 +21,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Option } from "antd/es/mentions";
+import { optionStatus } from "../../utils/DefaultData";
 
 export default function DoctorCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,42 +52,42 @@ export default function DoctorCalendar() {
       bookings: [
         {
           id: "1",
-          createDate: "20/7/2024",
+          createdDate: "20/7/2024",
           dateOfBirth: "09/03/2003",
           major: "Gan",
           gmail: "hoangphamhuy275132@gmail.com",
           fullname: "Phạm Huy Hoàng",
           gender: "Nam",
           note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
-          phone: "0985693949",
+          phoneNumber: "0985693949",
           status: "Chờ xử lý",
           timeBooking: "9h - 10h",
           dayBooking: "23/7/2024",
         },
         {
           id: "1",
-          createDate: "20/7/2024",
+          createdDate: "20/7/2024",
           dateOfBirth: "09/03/2003",
           major: "Gan",
           gmail: "hoangphamhuy275132@gmail.com",
           fullname: "Cù Ngọc Tuấn Hưng",
           gender: "Nam",
           note: "Gãy tay cmnr",
-          phone: "0985999900",
+          phoneNumber: "0985999900",
           status: "Chờ xử lý",
           timeBooking: "9h - 10h",
           dayBooking: "23/7/2024",
         },
         {
           id: "2",
-          createDate: "20/7/2024",
+          createdDate: "20/7/2024",
           dateOfBirth: "09/03/2003",
           major: "Gan",
           gmail: "hoangphamhuy275132@gmail.com",
           fullname: "Lê Hoàng Minh Hà",
           gender: "Nữ",
           note: "Ngộ độc gan cmnr",
-          phone: "0985693949",
+          phoneNumber: "0985693949",
           status: "Chờ xử lý",
           timeBooking: "10h - 11h",
           dayBooking: "24/7/2024",
@@ -96,8 +97,48 @@ export default function DoctorCalendar() {
     {
       day: "Tuesday",
       bookings: [
-        { time: "8:00 - 9:00", fullname: "Khám bệnh nhân 3" },
-        { time: "9:00 - 10:00", fullname: "Khám bệnh nhân 4" },
+        {
+          id: "1",
+          createdDate: "20/7/2024",
+          dateOfBirth: "09/03/2003",
+          major: "Gan",
+          gmail: "hoangphamhuy275132@gmail.com",
+          fullname: "Phạm Huy Hoàng",
+          gender: "Nam",
+          note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
+          phoneNumber: "0985693949",
+          status: "Chờ xử lý",
+          timeBooking: "9h - 10h",
+          dayBooking: "23/7/2024",
+        },
+        {
+          id: "1",
+          createdDate: "20/7/2024",
+          dateOfBirth: "09/03/2003",
+          major: "Gan",
+          gmail: "hoangphamhuy275132@gmail.com",
+          fullname: "Cù Ngọc Tuấn Hưng",
+          gender: "Nam",
+          note: "Gãy tay cmnr",
+          phoneNumber: "0985999900",
+          status: "Chờ xử lý",
+          timeBooking: "9h - 10h",
+          dayBooking: "23/7/2024",
+        },
+        {
+          id: "2",
+          createdDate: "20/7/2024",
+          dateOfBirth: "09/03/2003",
+          major: "Gan",
+          gmail: "hoangphamhuy275132@gmail.com",
+          fullname: "Lê Hoàng Minh Hà",
+          gender: "Nữ",
+          note: "Ngộ độc gan cmnr",
+          phoneNumber: "0985693949",
+          status: "Chờ xử lý",
+          timeBooking: "10h - 11h",
+          dayBooking: "24/7/2024",
+        },
       ],
     },
     // Thêm dữ liệu cho các ngày khác
@@ -130,25 +171,6 @@ export default function DoctorCalendar() {
   var onFinishFailed = (errorInfo) => {
     console.log("errorInfo");
   };
-
-  var optionStatus = [
-    {
-      value: "Chưa xác nhận",
-      label: "Chưa xác nhận",
-    },
-    {
-      value: "Chờ xử lý",
-      label: "Chờ xử lý",
-    },
-    {
-      value: "Không tới khám",
-      label: "Không tới khám",
-    },
-    {
-      value: "Thành công",
-      label: "Thành công",
-    },
-  ];
 
   const datePickkerStyle = {
     width: "100%",
@@ -267,7 +289,7 @@ export default function DoctorCalendar() {
                         <Col span={4}>{item.fullname}</Col>
                         <Col span={2}>{item.dateOfBirth}</Col>
                         <Col span={1}>{item.gender}</Col>
-                        <Col span={2}>{item.phone}</Col>
+                        <Col span={2}>{item.phoneNumber}</Col>
                         <Col span={8}>{item.note}</Col>
                         <Col span={6}>
                           <Button
@@ -334,7 +356,7 @@ export default function DoctorCalendar() {
               <Input value={selectedBooking.gmail} readOnly />
             </Form.Item>
             <Form.Item label="Số điện thoại">
-              <Input value={selectedBooking.phone} readOnly />
+              <Input value={selectedBooking.phoneNumber} readOnly />
             </Form.Item>
             <Form.Item label="Khoa khám">
               <Input value={selectedBooking.major} readOnly />

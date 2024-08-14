@@ -5,7 +5,11 @@ import { Button, Flex, Form, Image, Input, message, Space, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
-import { createMajor } from "../../services/MajorServices";
+import {
+  createMajor,
+  getMajorById,
+  updateMajor,
+} from "../../services/MajorServices";
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -48,26 +52,23 @@ export default function AddMajor() {
     },
   };
 
-  const data = {
-    id: "1",
-    name: "Tim mạch",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcStxf1FTzCSJeGxDr2ktBGPaipS3yHFywyHHw&s",
-    shortDescription: "Khám tim nè",
-    description: "Mổ tim nào",
-  };
-
   useEffect(() => {
     if (id) {
-      form.setFieldsValue(data);
-      setFileList([
-        {
-          uid: `-1`,
-          name: `image.png`,
-          status: "done",
-          url: data.image,
-        },
-      ]);
+      const fetchApi = async () => {
+        const result = await getMajorById(id);
+        if (result) {
+          form.setFieldsValue(result.data);
+          setFileList([
+            {
+              uid: `-1`,
+              name: `image.png`,
+              status: "done",
+              url: result.data.image,
+            },
+          ]);
+        }
+      };
+      fetchApi();
     }
   }, [id, form]);
 
@@ -79,6 +80,9 @@ export default function AddMajor() {
   };
 
   const onFinish = async (values) => {
+    if(id) {
+      values.id = id;
+    }
     if (fileList.length === 0) {
       message.error("Hãy tải ảnh chuyên khoa!");
       return;
@@ -91,9 +95,15 @@ export default function AddMajor() {
     formData.append("majordto", JSON.stringify(values));
 
     try {
-      const response = await createMajor(formData);
-      message.success("Đã tạo thành công");
-      console.log(response);
+      if (id) {
+        const response = await updateMajor(formData);
+        message.success("Đã sửa thành công");
+        console.log(response);
+      } else {
+        const response = await createMajor(formData);
+        message.success("Đã tạo thành công");
+        console.log(response);
+      }
     } catch (error) {
       message.error("Thất bại");
       console.error("Failed:", error);

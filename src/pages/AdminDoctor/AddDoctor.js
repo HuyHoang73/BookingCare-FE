@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import moment from 'moment';
+import moment from "moment";
 import {
   Button,
   Col,
@@ -21,8 +21,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../CustomAntd.css";
 import { Option } from "antd/es/mentions";
-import { createUser } from "../../services/UserServices";
-import { optionDegree, optionGender, optionMajor } from "../../utils/DefaultData";
+import {
+  createUser,
+  getUserById,
+  updateUser,
+} from "../../services/UserServices";
+import {
+  optionDegree,
+  optionGender,
+} from "../../utils/DefaultData";
+import { getAllMajors } from "../../services/MajorServices";
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -35,7 +43,7 @@ export default function AddDoctor() {
   const navigate = useNavigate();
 
   const backToListMajors = () => {
-    navigate("/admin/majors");
+    navigate("/admin/doctors");
   };
 
   const id = useParams();
@@ -44,6 +52,7 @@ export default function AddDoctor() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [dataMajor, setDataMajor] = useState([]);
 
   const dobChange = (date, dateString) => {
     setDateOfBirth(dateString);
@@ -64,41 +73,60 @@ export default function AddDoctor() {
 
   const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
-  const data = {
-    id: "1",
-    name: "Phạm Huy Hoàng",
-    dateOfBirth: "2003-07-03",
-    gmail: "hoangphamhuy275132@gmail.com",
-    phoneNumber: "0985693949",
-    username: "gacon123",
-    experience: 2,
-    certification: 3,
-    degree: "GS",
-    major: "Tim mạch",
-    description: "admin tối cao",
-    avatar: "https://taoanhdep.com/wp-content/uploads/2023/10/ai-350x265.jpg",
-    gender: "Nam",
-    address: "Cổ Nhuế 2, Bắc Từ Liêm, Hà Nội",
-    ethnicity: "Kinh",
-    identity: "001203001218"
-  };
+  // const data = {
+  //   id: "1",
+  //   name: "Phạm Huy Hoàng",
+  //   dateOfBirth: "2003-07-03",
+  //   gmail: "hoangphamhuy275132@gmail.com",
+  //   phoneNumber: "0985693949",
+  //   username: "gacon123",
+  //   experience: 2,
+  //   certification: 3,
+  //   degree: "GS",
+  //   major: "Tim mạch",
+  //   description: "admin tối cao",
+  //   avatar: "https://taoanhdep.com/wp-content/uploads/2023/10/ai-350x265.jpg",
+  //   gender: "Nam",
+  //   address: "Cổ Nhuế 2, Bắc Từ Liêm, Hà Nội",
+  //   ethnicity: "Kinh",
+  //   identity: "001203001218",
+  // };
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setDataMajor(result.data);
+      } else {
+        setDataMajor([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
   useEffect(() => {
     if (id.id) {
-      form.setFieldsValue({
-        ...data,
-        dateOfBirth: moment(data.dateOfBirth, 'DD-MM-YYYY'),
-      });
-      setFileList([
-        {
-          uid: `-1`,
-          name: `image.png`,
-          status: "done",
-          url: data.avatar,
-        },
-      ]);
+      console.log(id);
+      const fetchApi = async () => {
+        const result = await getUserById(id);
+        if (result) {
+          form.setFieldsValue({
+            ...result.data,
+            dateOfBirth: moment(result.data.dateOfBirth, "YYYY-MM-DD"),
+          });
+          setFileList([
+            {
+              uid: `-1`,
+              name: `image.png`,
+              status: "done",
+              url: result.data.avatar,
+            },
+          ]);
+        }
+      };
+      fetchApi();
     }
-  }, [id.id, form]);
+  }, [id, form]);
 
   const normFile = (e) => {
     if (Array.isArray(e)) {
@@ -109,24 +137,38 @@ export default function AddDoctor() {
 
   const onFinish = async (values) => {
     values.dateOfBirth = dateOfBirth;
-    values.avatar =
-      "https://th.bing.com/th/id/OIP.Y50bz_Lk7pNqt0yUxHY5XgHaLH?w=119&h=180&c=7&r=0&o=5&pid=1.7";
-    let finalValues = {
-      id: id.id,
-      ...values,
-    };
+    if (id.id) {
+      values.id = id;
+    }
+    if (fileList.length === 0) {
+      message.error("Hãy tải ảnh bác sĩ!");
+      return;
+    }
+
+    const formData = new FormData();
+    if (fileList.length > 0) {
+      formData.append("file", fileList[0].originFileObj);
+    }
+    formData.append("userdto", JSON.stringify(values));
+    console.log(values)
     try {
-      const response = await createUser(finalValues);
-      message.success(response.message);
+      if (id.id) {
+        const response = await updateUser(formData);
+        message.success("Đã sửa thành công");
+        console.log(response);
+      } else {
+        const response = await createUser(formData);
+        message.success("Đã tạo thành công");
+        console.log(response);
+      }
     } catch (error) {
       message.error("Thất bại");
       console.error("Failed:", error);
     }
-    console.log(finalValues);
   };
 
   var onFinishFailed = (errorInfo) => {
-    console.log("errorInfo");
+    console.log(errorInfo);
   };
 
   const inputNumberStyle = {
@@ -148,17 +190,28 @@ export default function AddDoctor() {
               <Col span={24}>
                 <Form.Item
                   name="avatar"
-                  label="Ảnh đại diện"
+                  label="Hình ảnh"
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
                 >
                   <Upload
-                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
                     listType="picture-card"
                     fileList={fileList}
+                    beforeUpload={(file) => {
+                      if (file.size > 2100000) {
+                        message.error("Dung lượng ảnh chỉ được tối đa 2MB");
+                        return Upload.LIST_IGNORE;
+                      }
+                      setFileList([file]);
+                      return false;
+                    }}
                     onPreview={handlePreview}
                     onChange={handleChange}
                     maxCount={1}
+                    customRequest={({ file, onSuccess }) => {
+                      setFileList([file]);
+                      onSuccess();
+                    }}
                   >
                     {fileList.length >= 1 ? null : (
                       <>
@@ -172,6 +225,7 @@ export default function AddDoctor() {
                           <FontAwesomeIcon icon={faPlus} />
                           <div>Tải ảnh lên</div>
                         </button>
+                        {fileList[0]?.name}
                       </>
                     )}
                   </Upload>
@@ -442,7 +496,7 @@ export default function AddDoctor() {
               <Col span={12}>
                 <Form.Item
                   label="Chọn chuyên khoa"
-                  name="majorId"
+                  name="major"
                   rules={[
                     {
                       required: true,
@@ -466,7 +520,7 @@ export default function AddDoctor() {
                         .localeCompare((optionB?.key ?? "").toLowerCase())
                     }
                   >
-                    {optionMajor.map((option) => (
+                    {dataMajor.map((option) => (
                       <Option
                         key={option.id}
                         value={option.id}
@@ -491,7 +545,7 @@ export default function AddDoctor() {
                     },
                   ]}
                 >
-                  <Input.TextArea rows={6} showCount maxLength={255} />
+                  <Input.TextArea rows={6} showCount maxLength={5000} />
                 </Form.Item>
               </Col>
 

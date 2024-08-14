@@ -57,12 +57,20 @@ export const optionDegree = [
 
 export const optionStatus = [
   {
-    value: "Chưa xác nhận",
-    label: "Chưa xác nhận",
+    value: "Chờ xác nhận",
+    label: "Chờ xác nhận",
   },
   {
     value: "Chờ xử lý",
     label: "Chờ xử lý",
+  },
+  {
+    value: "Đã xử lý",
+    label: "Đã xử lý",
+  },
+  {
+    value: "Đã từ chối",
+    label: "Đã từ chối",
   },
   {
     value: "Không tới khám",
