@@ -11,6 +11,7 @@ import {
   DatePicker,
   Select,
   Collapse,
+  message,
 } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,16 +19,21 @@ import {
   faEye,
   faMagnifyingGlass,
   faStethoscope,
+  faCircleExclamation,
+  faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Option } from "antd/es/mentions";
 import { optionStatus } from "../../utils/DefaultData";
+import { getAllBookings, getCalendars, updateBooking } from "../../services/BookingServices";
 
 export default function DoctorCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [dayBookingFrom, setDayBookingFrom] = useState(null);
   const [dayBookingTo, setDayBookingTo] = useState(null);
+  const [bookingData, setBookingData] = useState([]);
+  const [selectId, setSelectId] = useState(null);
 
   const dayBookingFromChange = (date, dateString) => {
     setDayBookingFrom(dateString);
@@ -46,103 +52,179 @@ export default function DoctorCalendar() {
     setIsModalOpen(false);
   };
 
-  const bookingData = [
-    {
-      day: "Monday",
-      bookings: [
-        {
-          id: "1",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Phạm Huy Hoàng",
-          gender: "Nam",
-          note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
-          phoneNumber: "0985693949",
-          status: "Chờ xử lý",
-          timeBooking: "9h - 10h",
-          dayBooking: "23/7/2024",
-        },
-        {
-          id: "1",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Cù Ngọc Tuấn Hưng",
-          gender: "Nam",
-          note: "Gãy tay cmnr",
-          phoneNumber: "0985999900",
-          status: "Chờ xử lý",
-          timeBooking: "9h - 10h",
-          dayBooking: "23/7/2024",
-        },
-        {
-          id: "2",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Lê Hoàng Minh Hà",
-          gender: "Nữ",
-          note: "Ngộ độc gan cmnr",
-          phoneNumber: "0985693949",
-          status: "Chờ xử lý",
-          timeBooking: "10h - 11h",
-          dayBooking: "24/7/2024",
-        },
-      ],
-    },
-    {
-      day: "Tuesday",
-      bookings: [
-        {
-          id: "1",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Phạm Huy Hoàng",
-          gender: "Nam",
-          note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
-          phoneNumber: "0985693949",
-          status: "Chờ xử lý",
-          timeBooking: "9h - 10h",
-          dayBooking: "23/7/2024",
-        },
-        {
-          id: "1",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Cù Ngọc Tuấn Hưng",
-          gender: "Nam",
-          note: "Gãy tay cmnr",
-          phoneNumber: "0985999900",
-          status: "Chờ xử lý",
-          timeBooking: "9h - 10h",
-          dayBooking: "23/7/2024",
-        },
-        {
-          id: "2",
-          createdDate: "20/7/2024",
-          dateOfBirth: "09/03/2003",
-          major: "Gan",
-          gmail: "hoangphamhuy275132@gmail.com",
-          fullname: "Lê Hoàng Minh Hà",
-          gender: "Nữ",
-          note: "Ngộ độc gan cmnr",
-          phoneNumber: "0985693949",
-          status: "Chờ xử lý",
-          timeBooking: "10h - 11h",
-          dayBooking: "24/7/2024",
-        },
-      ],
-    },
-    // Thêm dữ liệu cho các ngày khác
-  ];
+  const [isModalDeny, setIsModalDeny] = useState(false);
+  const closeDenyModal = () => {
+    setIsModalDeny(false);
+    setSelectId(null);
+  };
+  const openDenyModal = (id) => {
+    setSelectId(id);
+    setIsModalDeny(true);
+  };
+  const denyBooking = async () => {
+    if (selectId) {
+      try {
+        closeConfirmModal();
+        await updateBooking({ id: selectId, status: "failure" });
+        const fetchApi = async () => {
+          const result = await getAllBookings({});
+          if (Array.isArray(result.data)) {
+            setBookingData(result.data);
+          } else {
+            setBookingData([]);
+          }
+        };
+        fetchApi();
+        message.success("Thành công!");
+      } catch (error) {
+        console.error("Failed to delete doctor:", error);
+        message.error("Thất bại.");
+      }
+    }
+  };
+
+  const [isModalConfirm, setIsModalConfirm] = useState(false);
+  const closeConfirmModal = () => {
+    setSelectId(null);
+    setIsModalConfirm(false);
+  };
+
+  const openConfirmModal = (id) => {
+    setSelectId(id);
+    setIsModalConfirm(true);
+  };
+
+  const acceptBooking = async () => {
+    if (selectId) {
+      try {
+        closeConfirmModal();
+        await updateBooking({ id: selectId, status: "success" });
+        const fetchApi = async () => {
+          const result = await getAllBookings({});
+          if (Array.isArray(result.data)) {
+            setBookingData(result.data);
+          } else {
+            setBookingData([]);
+          }
+        };
+        fetchApi();
+        message.success("Thành công!");
+      } catch (error) {
+        console.error("Failed to delete doctor:", error);
+        message.error("Thất bại.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getCalendars();
+      if (Array.isArray(result.data)) {
+        setBookingData(result.data);
+      } else {
+        setBookingData([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  // const bookingData = [
+  //   {
+  //     day: "Monday",
+  //     bookings: [
+  //       {
+  //         id: "1",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Phạm Huy Hoàng",
+  //         gender: "Nam",
+  //         note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
+  //         phoneNumber: "0985693949",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "9h - 10h",
+  //         dayBooking: "23/7/2024",
+  //       },
+  //       {
+  //         id: "1",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Cù Ngọc Tuấn Hưng",
+  //         gender: "Nam",
+  //         note: "Gãy tay cmnr",
+  //         phoneNumber: "0985999900",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "9h - 10h",
+  //         dayBooking: "23/7/2024",
+  //       },
+  //       {
+  //         id: "2",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Lê Hoàng Minh Hà",
+  //         gender: "Nữ",
+  //         note: "Ngộ độc gan cmnr",
+  //         phoneNumber: "0985693949",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "10h - 11h",
+  //         dayBooking: "24/7/2024",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     day: "Tuesday",
+  //     bookings: [
+  //       {
+  //         id: "1",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Phạm Huy Hoàng",
+  //         gender: "Nam",
+  //         note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
+  //         phoneNumber: "0985693949",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "9h - 10h",
+  //         dayBooking: "23/7/2024",
+  //       },
+  //       {
+  //         id: "1",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Cù Ngọc Tuấn Hưng",
+  //         gender: "Nam",
+  //         note: "Gãy tay cmnr",
+  //         phoneNumber: "0985999900",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "9h - 10h",
+  //         dayBooking: "23/7/2024",
+  //       },
+  //       {
+  //         id: "2",
+  //         createdDate: "20/7/2024",
+  //         dateOfBirth: "09/03/2003",
+  //         major: "Gan",
+  //         gmail: "hoangphamhuy275132@gmail.com",
+  //         fullname: "Lê Hoàng Minh Hà",
+  //         gender: "Nữ",
+  //         note: "Ngộ độc gan cmnr",
+  //         phoneNumber: "0985693949",
+  //         status: "Chờ xử lý",
+  //         timeBooking: "10h - 11h",
+  //         dayBooking: "24/7/2024",
+  //       },
+  //     ],
+  //   },
+  //   // Thêm dữ liệu cho các ngày khác
+  // ];
 
   const processBookingData = (data) => {
     return data.map((dayData) => {
@@ -301,23 +383,28 @@ export default function DoctorCalendar() {
                           >
                             Xem
                           </Button>
-                          <Button
-                            type="primary"
-                            icon={<FontAwesomeIcon icon={faStethoscope} />}
-                            style={{ marginLeft: 8 }}
-                            onClick={() => console.log("Khám bệnh", item)}
-                          >
-                            Khám
-                          </Button>
-                          <Button
-                            type="primary"
-                            icon={<FontAwesomeIcon icon={faUserSlash} />}
-                            style={{ marginLeft: 8 }}
-                            danger
-                            onClick={() => console.log("Không đến", item)}
-                          >
-                            Không đến
-                          </Button>
+                          {item.status === "Chờ xử lý" && (
+                            <>
+                              <Button
+                                type="primary"
+                                icon={<FontAwesomeIcon icon={faStethoscope} />}
+                                style={{ marginLeft: 8 }}
+                                onClick={() => openConfirmModal(item.id)}
+                              >
+                                Khám
+                              </Button>
+
+                              <Button
+                                type="primary"
+                                icon={<FontAwesomeIcon icon={faUserSlash} />}
+                                style={{ marginLeft: 8 }}
+                                danger
+                                onClick={() => openDenyModal(item.id)}
+                              >
+                                Không đến
+                              </Button>
+                            </>
+                          )}
                         </Col>
                       </Row>
                     ))}
@@ -379,6 +466,90 @@ export default function DoctorCalendar() {
             </Form.Item>
           </Form>
         )}
+      </Modal>
+
+      {/* Alert Deny */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleExclamation}
+              style={{
+                color: "#FF4D4F",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalDeny}
+        centered
+        width={600}
+        footer={[
+          <Button type="primary" size="large" ghost onClick={closeDenyModal}>
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" danger onClick={denyBooking}>
+            Từ chối
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Xác nhận bệnh nhân không đến khám?
+        </p>
+      </Modal>
+
+      {/* Alert Confirm */}
+      <Modal
+        title={
+          <span>
+            <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{
+                color: "#1677FF",
+                fontSize: "60px",
+                textAlign: "center",
+              }}
+            />
+          </span>
+        }
+        closable={false}
+        open={isModalConfirm}
+        centered
+        width={650}
+        footer={[
+          <Button
+            type="primary"
+            size="large"
+            danger
+            ghost
+            onClick={closeConfirmModal}
+          >
+            Hủy
+          </Button>,
+          <Button type="primary" size="large" onClick={acceptBooking}>
+            Đồng ý
+          </Button>,
+        ]}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "15px",
+            fontWeight: "bold",
+            fontSize: "24px",
+          }}
+        >
+          Xác nhận thăm khám thành công?
+        </p>
       </Modal>
     </>
   );

@@ -117,15 +117,14 @@ export default function ListMajor() {
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 
   var onFinish = async (values) => {
-    let finalValues = {...values};
     try {
-      const response = await getAllMajors(finalValues);
+      const response = await getAllMajors(values);
       setData(response.data);
       console.log(data);
     } catch (error) {
       console.error("Failed:", error);
     }
-    console.log("Success", finalValues);
+    console.log("Success", values);
   };
 
   var onFinishFailed = (errorInfo) => {

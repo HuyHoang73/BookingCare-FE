@@ -40,19 +40,20 @@ export default function ListDoctor() {
   const [optionMajor, setOptionMajor] = useState([]);
   const [data, setData] = useState([]);
   const [isModalDelete, setIsModalDelete] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
+  const [selectId, setSelectId] = useState(null);
   const closeDeleteModal = () => {
+    setSelectId(null);
     setIsModalDelete(false);
   };
   const openDeleteModal = (id) => {
-    setDeleteId(id);
+    setSelectId(id);
     setIsModalDelete(true);
   };
 
   const deleteDoctor = async () => {
-    if (deleteId) {
+    if (selectId) {
       try {
-        await deleteUser(deleteId);
+        await deleteUser(selectId);
         const fetchApi = async () => {
           const result = await getAllUsers({"status": 1});
           if (Array.isArray(result.data)) {
