@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { getAllMajors } from "../../services/MajorServices";
 import { getAllUsers } from "../../services/UserServices";
+import { getAllTimes } from "../../services/TimeServices";
+import moment from "moment";
 
 export default function FormBooking({
   isFormBookingOpen,
@@ -15,7 +17,19 @@ export default function FormBooking({
 }) {
   const [optionDoctor, setOptionDoctor] = useState([]);
   const [optionMajor, setOptionMajor] = useState([]);
-  const onChange = (date, dateString) => {
+  const [doctorId, setDoctorId] = useState(false);
+  const [optionTime, setOptionTime] = useState([]);
+
+  const onChangeDateBooking = async (date, dateString) => {
+    console.log(date);
+    console.log(dateString)
+    try {
+      const response = await getAllTimes({ doctorId: doctorId, date: dateString });
+      setOptionTime(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Failed:", error);
+    }
     console.log(date, dateString);
   };
 
@@ -24,7 +38,7 @@ export default function FormBooking({
       const result = await getAllMajors({});
       if (Array.isArray(result.data)) {
         setOptionMajor(result.data);
-        console.log(result.data)
+        console.log(result.data);
       } else {
         setOptionMajor([]);
       }
@@ -42,59 +56,7 @@ export default function FormBooking({
     }
   };
 
-  // var optionDoctor = [
-  //   {
-  //     value: "1",
-  //     label: "Phạm Huy Hoàng",
-  //   },
-  //   {
-  //     value: "2",
-  //     label: "Lê Hoàng Minh Hà",
-  //   },
-  //   {
-  //     value: "3",
-  //     label: "Trần Phương Lan",
-  //   },
-  //   {
-  //     value: "4",
-  //     label: "Lê Minh Phương",
-  //   },
-  //   {
-  //     value: "5",
-  //     label: "Vũ Phương Thảo",
-  //   },
-  //   {
-  //     value: "6",
-  //     label: "Nguyễn Hồng Nhung",
-  //   },
-  // ];
-
-  var optionTime = [
-    {
-      value: "1",
-      label: "7h - 8h",
-    },
-    {
-      value: "2",
-      label: "8h - 9h",
-    },
-    {
-      value: "3",
-      label: "9h - 10h",
-    },
-    {
-      value: "4",
-      label: "10h - 11h",
-    },
-    {
-      value: "5",
-      label: "13h - 14h",
-    },
-    {
-      value: "6",
-      label: "16h - 17h",
-    },
-  ];
+  const changeDoctor = async (value) => setDoctorId(value);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOk = () => {
@@ -166,7 +128,6 @@ export default function FormBooking({
                   <DatePicker
                     placeholder="Chọn ngày sinh"
                     format="MM/DD/YYYY"
-                    onChange={onChange}
                     style={{ width: "100%" }}
                   />
                 </Form.Item>
@@ -254,11 +215,7 @@ export default function FormBooking({
                 }
               >
                 {optionMajor.map((option) => (
-                  <Option
-                    key={option.id}
-                    value={option.id}
-                    label={option.name}
-                  >
+                  <Option key={option.id} value={option.id} label={option.name}>
                     {option.name}
                   </Option>
                 ))}
@@ -279,6 +236,7 @@ export default function FormBooking({
               <Select
                 showSearch
                 style={{ width: "100%" }}
+                onChange={changeDoctor}
                 placeholder="Chon bác sĩ"
                 optionFilterProp="children"
                 filterOption={(input, option) =>
@@ -293,11 +251,7 @@ export default function FormBooking({
                 }
               >
                 {optionDoctor.map((option) => (
-                  <Option
-                    key={option.id}
-                    value={option.id}
-                    label={option.name}
-                  >
+                  <Option key={option.id} value={option.id} label={option.name}>
                     {option.name}
                   </Option>
                 ))}
@@ -319,9 +273,13 @@ export default function FormBooking({
                 >
                   <DatePicker
                     placeholder="Chọn ngày khám"
-                    format="MM/DD/YYYY"
-                    onChange={onChange}
+                    format="DD-MM-YYYY"
+                    onChange={onChangeDateBooking}
                     style={{ width: "100%" }}
+                    disabledDate={(current) =>
+                      current && current < moment().startOf("day")
+                    }
+                    disabled={!doctorId}
                   />
                 </Form.Item>
               </Col>
@@ -354,11 +312,11 @@ export default function FormBooking({
                   >
                     {optionTime.map((option) => (
                       <Option
-                        key={option.value}
-                        value={option.value}
-                        label={option.label}
+                        key={option.id}
+                        value={option.id}
+                        label={option.time}
                       >
-                        {option.label}
+                        {option.time}
                       </Option>
                     ))}
                   </Select>

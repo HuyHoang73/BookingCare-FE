@@ -6,11 +6,24 @@ import Carosel from "../../components/Carosel";
 import "../ClientMajor/ClientMajor.css";
 import { Option } from "antd/es/mentions";
 import { optionDegree, optionMajor } from "../../utils/DefaultData";
-import { createUser } from "../../services/UserServices";
+import { createUser, getAllUsers } from "../../services/UserServices";
+import { useEffect, useState } from "react";
 
 export default function ListDoctorClient() {
-
+  const [data, setData] = useState([]);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllUsers({"status": 1});
+      if (Array.isArray(result.data)) {
+        setData(result.data);
+      } else {
+        setData([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
   const onFinish = async (values) => {
     let finalValues = {
@@ -29,31 +42,6 @@ export default function ListDoctorClient() {
   var onFinishFailed = (errorInfo) => {
     console.log("errorInfo");
   };
-
-  const data = [
-    {
-      id: "1",
-      name: "Nguyễn Thị Liên Hương",
-      description: "BS Nguyễn Thị Liên Hương đã có hơn 20 năm kinh nghiệm trong lĩnh vực Mô phôi học. Bên cạnh công tác chuyên môn, bác sĩ Liên Hương còn dành nhiều thời gian cho hoạt động nghiên cứu khoa học và đóng góp nhiều công trình nghiên cứu, bài báo khoa học trong lĩnh vực Mô phôi học.",
-      degree: "GS",
-      experience: 10,
-      certification: 16,
-      major: "Trung tâm hỗ trợ sinh sản",
-      avatar: "https://tamanhhospital.vn/wp-content/uploads/2011/01/bac-si-nguyen-thi-lien-huong-avt.png",
-      gender: "Nữ"
-    },
-    {
-      id: "2",
-      name: "Vũ Thị Mai Anh",
-      description: "ThS.BS Vũ Thị Mai Anh là một bác sĩ trẻ giàu nhiệt huyết, bác sĩ Mai Anh luôn tích cực nghiên cứu và tiếp thu kiến thức mới ngay từ khi còn học tập tại Đại học Y Dược, Đại học Quốc gia Hà Nội.",
-      degree: "TS",
-      experience: 10,
-      certification: 16,
-      major: "Trung tâm mắt công nghệ cao",
-      avatar: "https://tamanhhospital.vn/wp-content/uploads/2021/02/vu-thi-mai-anh-avt.png",
-      gender: "Nữ"
-    },
-  ];
 
   const truncateDescription = (description, maxLength) => {
     return description.length > maxLength

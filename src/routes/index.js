@@ -20,10 +20,11 @@ import DoctorCalendar from "../pages/DoctorCalendar";
 import AdminSetting from "../pages/AdminSetting";
 import DoctorSetting from "../pages/DoctorSettings";
 import Login from "../pages/Login";
-import PrivateRoute from "./PrivateRouter";
+import PrivateRouterDoctor from "./PrivateRouterDoctor";
 import ListDoctorClient from "../pages/ClientDoctor/ListDoctorClient";
 import DoctorDetail from "../pages/ClientDoctor/DoctorDetail";
 import ClientContact from "../pages/ClientContact";
+import PrivateRouterAdmin from "./PrivateRouterAdmin";
 
 export const routes = [
   {
@@ -63,7 +64,34 @@ export const routes = [
     element: <Login />,
   },
   {
-    element: <PrivateRoute />,
+    element: <PrivateRouterDoctor />,
+    children: [
+      {
+        path: "/doctor",
+        element: <LayoutDoctor />,
+        children: [
+          {
+            index: true,
+            element: <DoctorHome />,
+          },
+          {
+            path: "booking",
+            element: <DoctorBooking />,
+          },
+          {
+            path: "calendar",
+            element: <DoctorCalendar />,
+          },
+          {
+            path: "settings",
+            element: <DoctorSetting />,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    element: <PrivateRouterAdmin />,
     children: [
       {
         path: "/admin",
@@ -126,29 +154,7 @@ export const routes = [
             element: <AdminArticle />,
           },
         ],
-      },
-      {
-        path: "/doctor",
-        element: <LayoutDoctor />,
-        children: [
-          {
-            index: true,
-            element: <DoctorHome />,
-          },
-          {
-            path: "booking",
-            element: <DoctorBooking />,
-          },
-          {
-            path: "calendar",
-            element: <DoctorCalendar />,
-          },
-          {
-            path: "settings",
-            element: <DoctorSetting />,
-          },
-        ],
-      },
-    ],
+      }
+    ]
   },
 ];

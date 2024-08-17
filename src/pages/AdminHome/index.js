@@ -1,227 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pie, Column } from "@ant-design/plots";
 import { format } from "fecha";
 import { Card, Col, Row, Space, Statistic } from "antd";
+import { getAllBookings } from "../../services/BookingServices";
+import { getAllUsers } from "../../services/UserServices";
+import { getAllMajors } from "../../services/MajorServices";
 
 export default function AdminHome() {
-  const dataDoctor = [
-    {
-      id: "abc",
-      gmail: "hoangphamhuy275132@gmail.com",
-      name: "Phạm Huy Hoàng",
-      phoneNumber: "0985693949",
-      experience: 15,
-      certification: 25,
-      degree: "GS",
-      gender: "Nam",
-      dateOfBirth: "07/03/2003",
-    },
-    {
-      id: "2",
-      name: "Cù Ngọc Tuấn Hưng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth: "18/05/2003",
-    },
-    {
-      id: "3",
-      name: "Trần Đình Hoan",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth: "18/05/2003",
-    },
-    {
-      id: "4",
-      name: "Đỗ Văn Hùng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth: "18/05/2003",
-    },
-    {
-      id: "5",
-      name: "Lê Tuấn Hưng",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth: "18/05/2003",
-    },
-    {
-      id: "6",
-      name: "Đào Xuân Đông",
-      gmail: "hungtuancn@gmail.com",
-      phoneNumber: "0959493949",
-      experience: 5,
-      certification: 1,
-      degree: "BS",
-      gender: "Nam",
-      dateOfBirth: "18/05/2003",
-    },
-  ];
+  const [dataDoctor, setDataDoctor] = useState([]);
+  const [dataMajor, setDataMajor] = useState([]);
+  const [dataBooking, setDataBooking] = useState([]);
 
-  const dataMajor = [
-    {
-      id: "1",
-      name: "Tim mạch",
-      numberOfDoctor: 100,
-      shortDescription: "Khám tim nè",
-    },
-    {
-      id: "2",
-      name: "Răng",
-      numberOfDoctor: 105,
-      shortDescription: "Nhổ răng nè",
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllUsers({});
+      if (Array.isArray(result.data)) {
+        setDataDoctor(result.data);
+      } else {
+        setDataDoctor([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
-  const dataBooking = [
-    {
-      id: "1",
-      createDate: "20/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Chờ xử lý",
-      timeBooking: "9h - 10h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "2",
-      createDate: "10/7/2024",
-      dateOfBirth: "18/05/2003",
-      major: "Nam khoa",
-      doctor: "Bảnk",
-      gmail: "hungtuancn@gmail.com",
-      fullname: "Cù",
-      phone: "0985123456",
-      status: "Thành công",
-      timeBooking: "10h - 11h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "3",
-      createDate: "21/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Chờ xác nhận",
-      timeBooking: "14h - 15h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "4",
-      createDate: "21/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Đã xử lý",
-      timeBooking: "14h - 15h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "5",
-      createDate: "19/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Đã từ chối",
-      timeBooking: "14h - 15h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "6",
-      createDate: "19/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Không tới khám",
-      timeBooking: "14h - 15h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "7",
-      createDate: "19/6/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Không tới khám",
-      timeBooking: "7h - 8h",
-      dayBooking: "23/7/2024",
-    },
-    {
-      id: "8",
-      createDate: "19/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Thành công",
-      timeBooking: "20h - 21h",
-      dayBooking: "13/7/2024",
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setDataMajor(result.data);
+      } else {
+        setDataMajor([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
-const formatDate = (dateStr) => {
-  const [day, month, year] = dateStr.split('/').map(Number);
-  return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-};
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllBookings({});
+      if (Array.isArray(result.data)) {
+        setDataBooking(result.data);
+        console.log(result.data)
+      } else {
+        setDataBooking([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+  };  
 
 const sortedDataBooking = [...dataBooking].sort((a, b) => 
-  new Date(formatDate(a.createDate)) - new Date(formatDate(b.createDate))
+  new Date(formatDate(a.createdDate)) - new Date(formatDate(b.createdDate))
 );
 
 // Tạo đối tượng để đếm số lượng booking theo ngày và trạng thái
 const countByDateAndStatus = sortedDataBooking.reduce((acc, booking) => {
-  const { createDate, status } = booking;
-  const formattedDate = formatDate(createDate);
+  const { createdDate, status } = booking;
+  const formattedDate = formatDate(createdDate);
 
   if (!acc[formattedDate]) {
       acc[formattedDate] = {};
@@ -239,6 +78,8 @@ const dataDateBooking = Object.keys(countByDateAndStatus).map(date => ({
   close: Object.values(countByDateAndStatus[date]).reduce((sum, count) => sum + count, 0)
 }));
 
+console.log(dataDateBooking)
+
   // Tạo đối tượng để đếm số lượng booking cho từng trạng thái
   const countByStatus = dataBooking.reduce((acc, booking) => {
     const status = booking.status;
@@ -254,6 +95,8 @@ const dataDateBooking = Object.keys(countByDateAndStatus).map(date => ({
     type: status,
     value: countByStatus[status],
   }));
+
+  console.log(dataStatus)
 
   // Tạo đối tượng để đếm số lượng booking cho từng khung giờ
   const countByTime = dataBooking.reduce((acc, booking) => {
@@ -271,18 +114,27 @@ const dataDateBooking = Object.keys(countByDateAndStatus).map(date => ({
     value: countByTime[time],
   }));
 
+  console.log(dataTime)
+
   const config = {
     data: dataDateBooking,
-    xField: 'date', // Ensure your data field is 'date'
+    xField: 'date',
     yField: 'close',
-    axis: { x: { title: false, size: 40 }, y: { title: false, size: 36 } },
-    slider: {
-      x: { 
-        labelFormatter: (d) => format(new Date(d), 'dd/MM/yyyy') // Format the date to "day/month/year"
+    xAxis: {
+      label: {
+        formatter: (value) => {
+          return format(new Date(value), 'DD/MM/YY');
+        },
       },
-      y: { labelFormatter: "~s" },
+      title: true,
     },
+    yAxis: {
+      title: false,
+    },
+    slider: { x: true },
   };
+
+  console.log(config)
 
   const config2 = {
     data: dataStatus,

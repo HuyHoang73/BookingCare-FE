@@ -14,9 +14,11 @@ import {
 import "../../CustomAntd.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Option } from "antd/es/mentions";
 import { optionMajor, optionStatus } from "../../utils/DefaultData";
+import { getAllBookings } from "../../services/BookingServices";
+import { format } from "fecha";
 
 export default function AdminBooking() {
   // eslint-disable-next-line no-unused-vars
@@ -24,6 +26,7 @@ export default function AdminBooking() {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [dayBookingFrom, setDayBookingFrom] = useState(null);
   const [dayBookingTo, setDayBookingTo] = useState(null);
+  const [data, setData] = useState([]);
 
   const dayBookingFromChange = (date, dateString) => {
     setDayBookingFrom(dateString);
@@ -50,8 +53,9 @@ export default function AdminBooking() {
   const columns = [
     {
       title: "Ngày tạo",
-      dataIndex: "createDate",
+      dataIndex: "createdDate",
       align: "center",
+      render: (createdDate) => format(new Date(createdDate), "DD/MM/YYYY"),
     },
     {
       title: "Họ tên",
@@ -70,7 +74,7 @@ export default function AdminBooking() {
     },
     {
       title: "SĐT",
-      dataIndex: "phone",
+      dataIndex: "phoneNumber",
       align: "center",
     },
     {
@@ -112,35 +116,23 @@ export default function AdminBooking() {
     },
   ];
 
-  const data = [
-    {
-      id: "1",
-      createDate: "20/7/2024",
-      dateOfBirth: "09/03/2003",
-      major: "Gan",
-      doctor: "Gà Con",
-      gmail: "hoangphamhuy275132@gmail.com",
-      fullname: "Phạm Huy Hoàng",
-      gender: "Nam",
-      note: "Ngộ độc gan cmnr",
-      phone: "0985693949",
-      status: "Chờ xử lý",
-      timeBooking: "9h - 10h",
-      dayBooking: "23/7/2024"
-    },
-    {
-      id: "2",
-      createDate: "10/7/2024",
-      dateOfBirth: "18/05/2003",
-      major: "Nam khoa",
-      doctor: "Bảnk",
-      gmail: "hungtuancn@gmail.com",
-      fullname: "Cù",
-      phone: "0985123456",
-      status: "Chờ xử lý",
-      timeBooking: "21/7/2024",
-    },
-  ];
+  useEffect(() => {
+    const fetchApi = async () => {
+      try {
+        const result = await getAllBookings({});
+        if (Array.isArray(result.data)) {
+          setData(result.data);
+          console.log(result.data);
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        setData([]);
+      }
+    };
+    fetchApi();
+  }, []);
 
   const dataWithKey = data.map((item) => ({ ...item, key: item.id }));
 

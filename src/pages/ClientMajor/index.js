@@ -4,9 +4,30 @@ import "./ClientMajor.css";
 import "../../base.css";
 import Carosel from "../../components/Carosel";
 import Search from "antd/es/input/Search";
+import { useEffect, useState } from "react";
+import { getAllMajors } from "../../services/MajorServices";
 
 export default function ClientMajor() {
   const onSearch = (value, _e, info) => console.log(value);
+  const [optionMajor, setOptionMajor] = useState([]);
+
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await getAllMajors({});
+      if (Array.isArray(result.data)) {
+        setOptionMajor(result.data);
+      } else {
+        setOptionMajor([]);
+      }
+    };
+    fetchApi();
+  }, []);
+
+  const truncateDescription = (description, maxLength) => {
+    return description.length > maxLength
+      ? description.substring(0, maxLength) + "..."
+      : description;
+  };
   return (
     <>
       <Carosel />
@@ -30,98 +51,33 @@ export default function ClientMajor() {
             xs={{ span: 22, offset: 1 }}
           >
             <Row gutter={[24, 66]}>
-              <Col
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-              >
-                <div className="major_item">
-                  <div className="major_image">
-                    <img
-                      src="https://tamanhhospital.vn/wp-content/uploads/2020/12/khoa_ivf.png"
-                      alt="major logo"
-                    />
+            {optionMajor.map((major) => (
+                <Col
+                  lg={{ span: 8 }}
+                  md={{ span: 12 }}
+                  sm={{ span: 24 }}
+                  xs={{ span: 24 }}
+                  key={major.id}
+                >
+                  <div className="home_major_item">
+                    <div className="home_major_image">
+                      <img
+                        src={major.image}
+                        alt={major.name}
+                      />
+                    </div>
+                    <Link className="home_major_name">
+                      {major.name}
+                    </Link>
+                    <p className="home_major_intro">
+                    {truncateDescription(major.shortDescription, 200)}
+                    </p>
+                    <Link className="link_with_line home_major_link">
+                      + Xem chi tiết
+                    </Link>
                   </div>
-                  <Link className="major_name">TRUNG TÂM HỖ TRỢ SINH SẢN</Link>
-                  <p className="major_intro">
-                    Trang thiết bị hiện đại, chẩn đoán chính xác, đem đến kết
-                    quả điều trị tốt, trong thời gian sớm nhất.
-                  </p>
-                  <Link className="link_with_line major_link">
-                    + Xem chi tiết
-                  </Link>
-                </div>
-              </Col>
-              <Col
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-              >
-                <div className="major_item">
-                  <div className="major_image">
-                    <img
-                      src="https://tamanhhospital.vn/wp-content/uploads/2020/12/khoa_ivf.png"
-                      alt="major logo"
-                    />
-                  </div>
-                  <Link className="major_name">TRUNG TÂM HỖ TRỢ SINH SẢN</Link>
-                  <p className="major_intro">
-                    Chẩn đoán chính xác, đem đến kết quả điều trị tốt, trong
-                    thời gian sớm nhất.
-                  </p>
-                  <Link className="link_with_line major_link">
-                    + Xem chi tiết
-                  </Link>
-                </div>
-              </Col>
-              <Col
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-              >
-                <div className="major_item">
-                  <div className="major_image">
-                    <img
-                      src="https://tamanhhospital.vn/wp-content/uploads/2020/12/khoa_ivf.png"
-                      alt="major logo"
-                    />
-                  </div>
-                  <Link className="major_name">TRUNG TÂM HỖ TRỢ SINH SẢN</Link>
-                  <p className="major_intro">
-                    Chẩn đoán chính xác, đem đến kết quả điều trị tốt, trong
-                    thời gian sớm nhất.
-                  </p>
-                  <Link className="link_with_line major_link">
-                    + Xem chi tiết
-                  </Link>
-                </div>
-              </Col>
-              <Col
-                lg={{ span: 8 }}
-                md={{ span: 12 }}
-                sm={{ span: 24 }}
-                xs={{ span: 24 }}
-              >
-                <div className="major_item">
-                  <div className="major_image">
-                    <img
-                      src="https://tamanhhospital.vn/wp-content/uploads/2020/12/khoa_ivf.png"
-                      alt="major logo"
-                    />
-                  </div>
-                  <Link className="major_name">TRUNG TÂM HỖ TRỢ SINH SẢN</Link>
-                  <p className="major_intro">
-                    Chẩn đoán chính xác, đem đến kết quả điều trị tốt, trong
-                    thời gian sớm nhất.
-                  </p>
-                  <Link className="link_with_line major_link">
-                    + Xem chi tiết
-                  </Link>
-                </div>
-              </Col>
+                </Col>
+              ))}
             </Row>
           </Col>
         </Row>

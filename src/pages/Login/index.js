@@ -2,16 +2,23 @@ import { Button, Col, Flex, Form, Image, Input, Row, Space, message } from "antd
 import "../../CustomAntd.css";
 import "./Login.css";
 import { login } from '../../services/AuthServices';
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     try {
       const response = await login(values);
       message.success('Đăng nhập thành công');
       console.log(response);
-      
+      const role = window.localStorage.getItem("role");
+      if(role === "ROLE_DOCTOR") {
+        navigate("/doctor"); 
+      } else {
+        navigate("/admin"); 
+      }
     } catch (error) {
       message.error("Thất bại");
       console.error('Login failed:', error);

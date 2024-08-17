@@ -8,39 +8,60 @@ import {
   Input,
   Row,
   Col,
-  DatePicker,
-  Select,
-  Collapse,
+  // DatePicker,
+  // Select,
   message,
 } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUserSlash,
   faEye,
-  faMagnifyingGlass,
+  // faMagnifyingGlass,
   faStethoscope,
   faCircleExclamation,
   faCircleInfo,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { Option } from "antd/es/mentions";
-import { optionStatus } from "../../utils/DefaultData";
-import { getAllBookings, getCalendars, updateBooking } from "../../services/BookingServices";
+// import { Option } from "antd/es/mentions";
+// import { optionStatus } from "../../utils/DefaultData";
+import {
+  getCalendars,
+  updateBooking,
+} from "../../services/BookingServices";
 
 export default function DoctorCalendar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [dayBookingFrom, setDayBookingFrom] = useState(null);
-  const [dayBookingTo, setDayBookingTo] = useState(null);
-  const [bookingData, setBookingData] = useState([]);
+  // const [dayBookingFrom, setDayBookingFrom] = useState(null);
+  // const [dayBookingTo, setDayBookingTo] = useState(null);
   const [selectId, setSelectId] = useState(null);
+  const [processedData, setProcessedData] = useState([]);
 
-  const dayBookingFromChange = (date, dateString) => {
-    setDayBookingFrom(dateString);
+  // const dayBookingFromChange = (date, dateString) => {
+  //   setDayBookingFrom(dateString);
+  // };
+  // const dayBookingToChange = (date, dateString) => {
+  //   setDayBookingTo(dateString);
+  // };
+
+  const processBookingData = (data) => {
+    return data.map((dayData) => {
+      const bookingsArray = Array.isArray(dayData.bookings)
+        ? dayData.bookings
+        : [];
+      const groupedBookings = bookingsArray.reduce((acc, booking) => {
+        const existing = acc.find((b) => b.time === booking.timeBooking);
+        if (existing) {
+          existing.bookings.push(booking);
+        } else {
+          acc.push({ time: booking.timeBooking, bookings: [booking] });
+        }
+        return acc;
+      }, []);
+      return { ...dayData, bookings: groupedBookings };
+    });
   };
-  const dayBookingToChange = (date, dateString) => {
-    setDayBookingTo(dateString);
-  };
+
   const isFormBookingOpen = (item) => {
     setIsModalOpen(true);
     setSelectedBooking(item);
@@ -64,14 +85,15 @@ export default function DoctorCalendar() {
   const denyBooking = async () => {
     if (selectId) {
       try {
-        closeConfirmModal();
+        closeDenyModal();
         await updateBooking({ id: selectId, status: "failure" });
         const fetchApi = async () => {
-          const result = await getAllBookings({});
+          const result = await getCalendars();
           if (Array.isArray(result.data)) {
-            setBookingData(result.data);
+            const processed = processBookingData(result.data);
+            setProcessedData(processed);
           } else {
-            setBookingData([]);
+            setProcessedData(null);
           }
         };
         fetchApi();
@@ -100,11 +122,13 @@ export default function DoctorCalendar() {
         closeConfirmModal();
         await updateBooking({ id: selectId, status: "success" });
         const fetchApi = async () => {
-          const result = await getAllBookings({});
+          const result = await getCalendars();
           if (Array.isArray(result.data)) {
-            setBookingData(result.data);
+            const processed = processBookingData(result.data);
+            setProcessedData(processed);
+            console.log(processedData)
           } else {
-            setBookingData([]);
+            setProcessedData(null);
           }
         };
         fetchApi();
@@ -120,300 +144,88 @@ export default function DoctorCalendar() {
     const fetchApi = async () => {
       const result = await getCalendars();
       if (Array.isArray(result.data)) {
-        setBookingData(result.data);
+        const processed = processBookingData(result.data);
+        setProcessedData(processed);
       } else {
-        setBookingData([]);
+        setProcessedData(null);
       }
     };
     fetchApi();
   }, []);
-
-  // const bookingData = [
-  //   {
-  //     day: "Monday",
-  //     bookings: [
-  //       {
-  //         id: "1",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Phạm Huy Hoàng",
-  //         gender: "Nam",
-  //         note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
-  //         phoneNumber: "0985693949",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "9h - 10h",
-  //         dayBooking: "23/7/2024",
-  //       },
-  //       {
-  //         id: "1",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Cù Ngọc Tuấn Hưng",
-  //         gender: "Nam",
-  //         note: "Gãy tay cmnr",
-  //         phoneNumber: "0985999900",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "9h - 10h",
-  //         dayBooking: "23/7/2024",
-  //       },
-  //       {
-  //         id: "2",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Lê Hoàng Minh Hà",
-  //         gender: "Nữ",
-  //         note: "Ngộ độc gan cmnr",
-  //         phoneNumber: "0985693949",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "10h - 11h",
-  //         dayBooking: "24/7/2024",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     day: "Tuesday",
-  //     bookings: [
-  //       {
-  //         id: "1",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Phạm Huy Hoàng",
-  //         gender: "Nam",
-  //         note: "Vàng da, tiểu đặc, chán ăn, liệu tôi có phải đã bị ngộ độc gan không hả bác sĩ ơi huhuhu",
-  //         phoneNumber: "0985693949",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "9h - 10h",
-  //         dayBooking: "23/7/2024",
-  //       },
-  //       {
-  //         id: "1",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Cù Ngọc Tuấn Hưng",
-  //         gender: "Nam",
-  //         note: "Gãy tay cmnr",
-  //         phoneNumber: "0985999900",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "9h - 10h",
-  //         dayBooking: "23/7/2024",
-  //       },
-  //       {
-  //         id: "2",
-  //         createdDate: "20/7/2024",
-  //         dateOfBirth: "09/03/2003",
-  //         major: "Gan",
-  //         gmail: "hoangphamhuy275132@gmail.com",
-  //         fullname: "Lê Hoàng Minh Hà",
-  //         gender: "Nữ",
-  //         note: "Ngộ độc gan cmnr",
-  //         phoneNumber: "0985693949",
-  //         status: "Chờ xử lý",
-  //         timeBooking: "10h - 11h",
-  //         dayBooking: "24/7/2024",
-  //       },
-  //     ],
-  //   },
-  //   // Thêm dữ liệu cho các ngày khác
-  // ];
-
-  const processBookingData = (data) => {
-    return data.map((dayData) => {
-      const groupedBookings = dayData.bookings.reduce((acc, booking) => {
-        const existing = acc.find((b) => b.time === booking.timeBooking);
-        if (existing) {
-          existing.bookings.push(booking);
-        } else {
-          acc.push({ time: booking.timeBooking, bookings: [booking] });
-        }
-        return acc;
-      }, []);
-      return { ...dayData, bookings: groupedBookings };
-    });
-  };
-
-  const processedData = processBookingData(bookingData);
-
-  var onFinish = (values) => {
-    values.dayBookingFrom = dayBookingFrom;
-    values.dayBookingTo = dayBookingTo;
-    let finalValues = { ...values };
-    console.log("sucess", finalValues);
-  };
-
-  var onFinishFailed = (errorInfo) => {
-    console.log("errorInfo");
-  };
-
-  const datePickkerStyle = {
-    width: "100%",
-  };
-
-  const [form] = Form.useForm();
-
-  const formSearchBooking = (
-    <>
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      >
-        <Row gutter={24}>
-          {/* Ngày đặt từ */}
-          <Col span={8}>
-            <Form.Item label="Ngày đặt từ" name="dayBookingFrom">
-              <DatePicker
-                style={datePickkerStyle}
-                onChange={dayBookingFromChange}
-              />
-            </Form.Item>
-          </Col>
-
-          {/* Ngày đặt đến */}
-          <Col span={8}>
-            <Form.Item label="Ngày đặt đến" name="dayBookingTo">
-              <DatePicker
-                style={datePickkerStyle}
-                onChange={dayBookingToChange}
-              />
-            </Form.Item>
-          </Col>
-
-          {/* Trạng thái */}
-          <Col span={8}>
-            <Form.Item label="Chọn trạng thái" name="status">
-              <Select
-                showSearch
-                style={{ width: "100%" }}
-                placeholder="Chon trạng thái"
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  (option?.label.toLowerCase() ?? "").includes(
-                    input.toLowerCase()
-                  )
-                }
-                filterSort={(optionA, optionB) =>
-                  (optionA?.key ?? "")
-                    .toLowerCase()
-                    .localeCompare((optionB?.key ?? "").toLowerCase())
-                }
-              >
-                {optionStatus.map((option) => (
-                  <Option
-                    key={option.value}
-                    value={option.value}
-                    label={option.label}
-                  >
-                    {option.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-
-          <Col span={24}>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                icon={<FontAwesomeIcon icon={faMagnifyingGlass} />}
-              >
-                Tìm kiếm
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </>
-  );
-
-  const items = [
-    {
-      key: "1",
-      label: "Tìm kiếm",
-      children: formSearchBooking,
-    },
-  ];
-
+  
   return (
     <>
       <Space direction="vertical" size="large" style={{ display: "flex" }}>
         <h1>Lịch Khám Bệnh</h1>
-        <Collapse
+        {/* <Collapse
           className="custom-collapse"
           defaultActiveKey={["1"]}
           expandIconPosition="end"
           items={items}
-        />
-        <Tabs defaultActiveKey="Monday">
-          {processedData.map((dayData) => (
-            <Tabs.TabPane tab={dayData.day} key={dayData.day}>
-              <Timeline mode="left">
-                {dayData.bookings.map((group, index) => (
-                  <Timeline.Item key={index} label={group.time}>
-                    {group.bookings.map((item, subIndex) => (
-                      <Row
-                        gutter={16}
-                        key={subIndex}
-                        style={{ marginBottom: "10px" }}
-                      >
-                        <Col span={4}>{item.fullname}</Col>
-                        <Col span={2}>{item.dateOfBirth}</Col>
-                        <Col span={1}>{item.gender}</Col>
-                        <Col span={2}>{item.phoneNumber}</Col>
-                        <Col span={8}>{item.note}</Col>
-                        <Col span={6}>
-                          <Button
-                            type="primary"
-                            icon={<FontAwesomeIcon icon={faEye} />}
-                            style={{ marginLeft: 8 }}
-                            onClick={() => isFormBookingOpen(item)}
-                            ghost
-                          >
-                            Xem
-                          </Button>
-                          {item.status === "Chờ xử lý" && (
-                            <>
-                              <Button
-                                type="primary"
-                                icon={<FontAwesomeIcon icon={faStethoscope} />}
-                                style={{ marginLeft: 8 }}
-                                onClick={() => openConfirmModal(item.id)}
-                              >
-                                Khám
-                              </Button>
+        /> */}
+        {processedData && (
+          <Tabs defaultActiveKey="Monday">
+            {processedData.map((dayData) => (
+              <Tabs.TabPane tab={dayData.day} key={dayData.day}>
+                <Timeline mode="left">
+                  {dayData.bookings.map((group, index) => (
+                    <Timeline.Item key={index} label={group.time}>
+                      {group.bookings.map((item, subIndex) => (
+                        <Row
+                          gutter={16}
+                          key={`booking-${subIndex}`}
+                          style={{ marginBottom: "10px" }}
+                        >
+                          <Col span={4}>{item.fullname}</Col>
+                          <Col span={2}>{item.dateOfBirth}</Col>
+                          <Col span={1}>{item.gender}</Col>
+                          <Col span={2}>{item.phoneNumber}</Col>
+                          <Col span={6}>{item.note}</Col>
+                          <Col span={2}>{item.status}</Col>
+                          <Col span={6}>
+                            <Button
+                              type="primary"
+                              icon={<FontAwesomeIcon icon={faEye} />}
+                              style={{ marginLeft: 8 }}
+                              onClick={() => isFormBookingOpen(item)}
+                              ghost
+                            >
+                              Xem
+                            </Button>
+                            {item.status === "Đã xử lý" && (
+                              <>
+                                <Button
+                                  type="primary"
+                                  icon={
+                                    <FontAwesomeIcon icon={faStethoscope} />
+                                  }
+                                  style={{ marginLeft: 8 }}
+                                  onClick={() => openConfirmModal(item.id)}
+                                >
+                                  Khám
+                                </Button>
 
-                              <Button
-                                type="primary"
-                                icon={<FontAwesomeIcon icon={faUserSlash} />}
-                                style={{ marginLeft: 8 }}
-                                danger
-                                onClick={() => openDenyModal(item.id)}
-                              >
-                                Không đến
-                              </Button>
-                            </>
-                          )}
-                        </Col>
-                      </Row>
-                    ))}
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            </Tabs.TabPane>
-          ))}
-        </Tabs>
+                                <Button
+                                  type="primary"
+                                  icon={<FontAwesomeIcon icon={faUserSlash} />}
+                                  style={{ marginLeft: 8 }}
+                                  danger
+                                  onClick={() => openDenyModal(item.id)}
+                                >
+                                  Không đến
+                                </Button>
+                              </>
+                            )}
+                          </Col>
+                        </Row>
+                      ))}
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              </Tabs.TabPane>
+            ))}
+          </Tabs>
+        )}
       </Space>
       <Modal
         title={<p className="ant-modal-title">Thông tin lịch khám</p>}

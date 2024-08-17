@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar, Button, Dropdown, Image } from "antd";
 import { useNavigate } from "react-router-dom";
+import { clearAuth } from "../../utils/axiosConfig";
 
 const avatarStyles = {
   cursor: "pointer",
@@ -26,6 +27,11 @@ export default function DoctorHeader() {
   const goToDoctorSettings = () => {
     navigate("/doctor/settings");
   };
+
+  const logout = () => {
+    clearAuth();
+    navigate("/login");
+  }
 
   const items = [
     {
@@ -55,7 +61,7 @@ export default function DoctorHeader() {
     {
       key: "3",
       label: (
-        <Button style={buttonStyles}>
+        <Button style={buttonStyles} onClick={logout}>
           <FontAwesomeIcon
             icon={faArrowRightFromBracket}
             style={{ marginRight: "7px" }}

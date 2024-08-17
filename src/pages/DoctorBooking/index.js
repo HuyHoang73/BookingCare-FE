@@ -154,11 +154,6 @@ export default function DoctorBooking() {
       align: "center",
     },
     {
-      title: "Bác sĩ khám",
-      dataIndex: "doctor",
-      align: "center",
-    },
-    {
       title: "Thời gian khám",
       dataIndex: "timeBooking",
       align: "center",
